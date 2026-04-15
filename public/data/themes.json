@@ -1,0 +1,60 @@
+{
+  "assigned": [
+    {
+      "name": "La NBA",
+      "player": "Matthieu"
+    },
+    {
+      "name": "Hip-Hop US",
+      "player": "Matthieu"
+    },
+    {
+      "name": "Les droits humains",
+      "player": "Léa"
+    },
+    {
+      "name": "Aya Nakamura",
+      "player": "Léa"
+    },
+    {
+      "name": "Harry Potter",
+      "player": "Amandine"
+    },
+    {
+      "name": "Tennis",
+      "player": "Amandine"
+    },
+    {
+      "name": "Chanson française 90/2000",
+      "player": "Catherine"
+    },
+    {
+      "name": "Zelda",
+      "player": "Catherine"
+    },
+    {
+      "name": "Politique de la Ve République",
+      "player": "Nicolas"
+    },
+    {
+      "name": "Les Jeux olympiques",
+      "player": "Nicolas"
+    },
+    {
+      "name": "Friends",
+      "player": "Hélène"
+    },
+    {
+      "name": "Toulouse",
+      "player": "Hélène"
+    }
+  ],
+  "generic": [
+    "Pâtisserie",
+    "Médias français",
+    "Langue française",
+    "Mode",
+    "Animaux",
+    "Drapeaux"
+  ]
+}
