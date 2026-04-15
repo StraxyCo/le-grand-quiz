@@ -358,15 +358,26 @@
     "id": "P02-002",
     "phase": "Phase02",
     "theme": "La NBA",
-    "question": "Qui détient le record du plus grand nombre de points marqués en carrière en NBA ?",
-    "media": null,
-    "answer": "LeBron James",
-    "wrong1": "Kareem Abdul-Jabbar",
-    "wrong2": "Karl Malone",
-    "wrong3": "Kobe Bryant"
+    "question": "Qui est le dernier joueur américain à avoir été désigné MVP de saison régulière en NBA ?",
+    "media": "public/media/phase02/nba-mvp-trophy.png",
+    "answer": "James Harden",
+    "wrong1": "LeBron James",
+    "wrong2": "Russel Westbook",
+    "wrong3": "Stephen Curry"
   },
   {
     "id": "P02-003",
+    "phase": "Phase02",
+    "theme": "La NBA",
+    "question": "Quelles villes se sont rencontrées pour le premier match de la Basketball Association of America, ancêtre de la NBA ?",
+    "media": null,
+    "answer": "New York & Toronto",
+    "wrong1": "New York & Chicago",
+    "wrong2": "Chicago & Philadelphie",
+    "wrong3": "Washington & Philadelphie"
+  },
+  {
+    "id": "P02-004",
     "phase": "Phase02",
     "theme": "La NBA",
     "question": "Combien de joueurs français ont joué un match en NBA en 2025-26 ?",
@@ -378,40 +389,7 @@
     "note": "Nicolas Batum, Joan Beringer, Sidy Cissoko, Bilal Coulibaly, Pacome Dadiet, Moussa Diabate, Mohamed Diawara, Ousmane Dieng, Noa Essengue, Rudy Gobert, Killian Hayes, Noah Penda, Maxime Raynaud, Zaccharie Risacher, Rayan Rupert, Tidjane Salaun, Alex Sarr, Olivier Sarr, Nolan Traore, Victor Wembanyama, Guerschon Yabusele,"
   },
   {
-    "id": "P02-004",
-    "phase": "Phase02",
-    "theme": "La NBA",
-    "question": "Qui est le dernier joueur américain à avoir été désigné MVP de saison régulière en NBA ?",
-    "media": "public/media/phase02/nba-mvp-trophy.png",
-    "answer": "James Harden",
-    "wrong1": "LeBron James",
-    "wrong2": "Russel Westbook",
-    "wrong3": "Stephen Curry"
-  },
-  {
     "id": "P02-005",
-    "phase": "Phase02",
-    "theme": "Hip-Hop US",
-    "question": "Quel album de Kendrick Lamar a remporté le prix Pulitzer en 2018 ?",
-    "media": null,
-    "answer": "DAMN.",
-    "wrong1": "Section.80",
-    "wrong2": "good kid m.A.A.d city",
-    "wrong3": "To Pimp a Butterfly"
-  },
-  {
-    "id": "P02-006",
-    "phase": "Phase02",
-    "theme": "Hip-Hop US",
-    "question": "Quel est le vrai nom d'Eminem ?",
-    "media": null,
-    "answer": "Marshall Mathers",
-    "wrong1": "Curtis Jackson",
-    "wrong2": "Shawn Carter",
-    "wrong3": "Calvin Broadus"
-  },
-  {
-    "id": "P02-007",
     "phase": "Phase02",
     "theme": "Hip-Hop US",
     "question": "Quel duo a sorti le titre \"Empire State of Mind\" ?",
@@ -422,15 +400,37 @@
     "wrong3": "Nas & Lauryn Hill"
   },
   {
+    "id": "P02-006",
+    "phase": "Phase02",
+    "theme": "Hip-Hop US",
+    "question": "Quel est le vrai nom d'Eminem ?",
+    "media": null,
+    "answer": "Marshall Mathers",
+    "wrong1": "Curtis Jackson",
+    "wrong2": "Shawn Carter",
+    "wrong3": "Michael Meeves"
+  },
+  {
+    "id": "P02-007",
+    "phase": "Phase02",
+    "theme": "Hip-Hop US",
+    "question": "Quel album de Kendrick Lamar a remporté le prix Pulitzer en 2018 ?",
+    "media": null,
+    "answer": "DAMN.",
+    "wrong1": "Section.80",
+    "wrong2": "good kid m.A.A.d city",
+    "wrong3": "To Pimp a Butterfly"
+  },
+  {
     "id": "P02-008",
     "phase": "Phase02",
     "theme": "Hip-Hop US",
-    "question": "Quel artiste a sorti l'album \"The College Dropout\" ?",
+    "question": "En quelle année est mort le rappeur Nate Dogg ?",
     "media": null,
-    "answer": "Kanye West",
-    "wrong1": "Lil Wayne",
-    "wrong2": "Common",
-    "wrong3": "Mos Def"
+    "answer": "2011",
+    "wrong1": "2007",
+    "wrong2": "2009",
+    "wrong3": "2013"
   },
   {
     "id": "P02-009",
@@ -447,17 +447,6 @@
     "id": "P02-010",
     "phase": "Phase02",
     "theme": "Les droits humains",
-    "question": "Quelle convention internationale de 1989 protège spécifiquement les droits de l'enfant ?",
-    "media": null,
-    "answer": "La Convention relative aux droits de l'enfant (CIDE)",
-    "wrong1": "La Charte de l'ONU",
-    "wrong2": "La Convention de Genève",
-    "wrong3": "Le Pacte de Marrakech"
-  },
-  {
-    "id": "P02-011",
-    "phase": "Phase02",
-    "theme": "Les droits humains",
     "question": "Dans quel pays Malala Yousafzai a-t-elle milité pour le droit à l'éducation des filles ?",
     "media": "public/media/phase02/malala.png",
     "answer": "Pakistan",
@@ -466,7 +455,7 @@
     "wrong3": "Afghanistan"
   },
   {
-    "id": "P02-012",
+    "id": "P02-011",
     "phase": "Phase02",
     "theme": "Les droits humains",
     "question": "Au sein de quelle organisation la Convention européenne des droits de l'homme est-elle adoptée ?",
@@ -477,40 +466,18 @@
     "wrong3": "Union Européenne"
   },
   {
+    "id": "P02-012",
+    "phase": "Phase02",
+    "theme": "Les droits humains",
+    "question": "Quelle convention internationale de 1989 protège spécifiquement les droits de l'enfant ?",
+    "media": null,
+    "answer": "La Convention relative aux droits de l'enfant (CIDE)",
+    "wrong1": "La Charte de l'ONU",
+    "wrong2": "La Convention de Genève",
+    "wrong3": "Le Pacte de Marrakech"
+  },
+  {
     "id": "P02-013",
-    "phase": "Phase02",
-    "theme": "Aya Nakamura",
-    "question": "Dans quelle ville Aya Nakamura est-elle née ?",
-    "media": null,
-    "answer": "Bamako",
-    "wrong1": "Paris",
-    "wrong2": "Abidjan",
-    "wrong3": "Dakar"
-  },
-  {
-    "id": "P02-014",
-    "phase": "Phase02",
-    "theme": "Aya Nakamura",
-    "question": "En quelle année sort son premier album éponyme \"Aya Nakamura\" ?",
-    "media": null,
-    "answer": "2017",
-    "wrong1": "2013",
-    "wrong2": "2019",
-    "wrong3": "2015"
-  },
-  {
-    "id": "P02-015",
-    "phase": "Phase02",
-    "theme": "Aya Nakamura",
-    "question": "Avec quel artiste a-t-elle collaboré sur le titre \"Dégaine\" ?",
-    "media": "public/media/phase02/degaine.mp3",
-    "answer": "Dystinct",
-    "wrong1": "Ninho",
-    "wrong2": "Tayc",
-    "wrong3": "Dadju"
-  },
-  {
-    "id": "P02-016",
     "phase": "Phase02",
     "theme": "Aya Nakamura",
     "question": "Quel est le titre de ce morceau ?",
@@ -521,107 +488,128 @@
     "wrong3": "Love d’un voyou"
   },
   {
+    "id": "P02-014",
+    "phase": "Phase02",
+    "theme": "Aya Nakamura",
+    "question": "Dans quelle ville Aya Nakamura est-elle née ?",
+    "media": null,
+    "answer": "Bamako",
+    "wrong1": "Paris",
+    "wrong2": "Abidjan",
+    "wrong3": "Dakar"
+  },
+  {
+    "id": "P02-015",
+    "phase": "Phase02",
+    "theme": "Aya Nakamura",
+    "question": "En quelle année sort son premier album éponyme \"Aya Nakamura\" ?",
+    "media": null,
+    "answer": "2017",
+    "wrong1": "2013",
+    "wrong2": "2019",
+    "wrong3": "2015"
+  },
+  {
+    "id": "P02-016",
+    "phase": "Phase02",
+    "theme": "Aya Nakamura",
+    "question": "Avec quel artiste a-t-elle collaboré sur le titre \"Dégaine\" ?",
+    "media": "public/media/phase02/degaine.mp3",
+    "answer": "Damso",
+    "wrong1": "Ninho",
+    "wrong2": "Tayc",
+    "wrong3": "Dadju"
+  },
+  {
     "id": "P02-017",
     "phase": "Phase02",
-    "theme": "La nouvelle vague",
-    "question": "Quel réalisateur a signé À bout de souffle (1960) ?",
+    "theme": "Tennis",
+    "question": "Quel joueur masculin a été le plus longtemps numéro 1 mondial de tennis (237 semaines) ?",
     "media": null,
-    "answer": "Jean-Luc Godard",
-    "wrong1": "François Truffaut",
-    "wrong2": "Claude Chabrol",
-    "wrong3": "Éric Rohmer"
+    "answer": "Roger Federer",
+    "wrong1": "Lleyton Hewitt",
+    "wrong2": "Novak Djokovic",
+    "wrong3": "Jimmy Connors"
   },
   {
     "id": "P02-018",
     "phase": "Phase02",
-    "theme": "La nouvelle vague",
-    "question": "Quelle actrice est la muse de Godard et star de Vivre sa vie ?",
-    "media": null,
-    "answer": "Anna Karina",
-    "wrong1": "Brigitte Bardot",
-    "wrong2": "Jeanne Moreau",
-    "wrong3": "Catherine Deneuve"
+    "theme": "Tennis",
+    "question": "Comment s'appelle cette joueuse, plus jeune numéro un mondiale de l'histoire du tennis ?",
+    "media": "public/media/phase02/martina-hingis.png",
+    "answer": "Martina Hingis",
+    "wrong1": "Serena Williams",
+    "wrong2": "Kim Clijsters",
+    "wrong3": "Monica Seles"
   },
   {
     "id": "P02-019",
     "phase": "Phase02",
-    "theme": "La nouvelle vague",
-    "question": "Quel cinéaste de la Nouvelle Vague tourne en tant qu'acteur dans le film 'Rencontres du 3ème type' de Steven Spielberg ?",
-    "media": null,
-    "answer": "François Truffaut",
-    "wrong1": "Claude Chabrol",
-    "wrong2": "Jean-Luc Godard",
-    "wrong3": "Eric Rohmer"
+    "theme": "Tennis",
+    "question": "Face à quel joueur Richard Gasquet a-t-il disputé le dernier match de sa carrière profesionnelle, durant l'édition 2025 de Roland-Garros ?",
+    "media": "public/media/phase02/richard-gasquet.png",
+    "answer": "Carlos Alcaraz",
+    "wrong1": "Rafael Nadal",
+    "wrong2": "Jannik Sinner",
+    "wrong3": "Novak Djokovic"
   },
   {
     "id": "P02-020",
     "phase": "Phase02",
-    "theme": "La nouvelle vague",
-    "question": "Quel premier long métrage marque la collaboration entre Jean-Luc Godard et Jean-Paul Belmondo ?",
+    "theme": "Tennis",
+    "question": "Quelle joueuse de tennis féminin détient le record du nombre de tournois du Grand Chelem remportés en simple avec 24 couronnes ?",
     "media": null,
-    "answer": "À bout de souffle",
-    "wrong1": "Vivre sa vie",
-    "wrong2": "Pierrot le Fou",
-    "wrong3": "Une femme est une femme"
+    "answer": "Margaret Smith Court",
+    "wrong1": "Amélie Mauresmo",
+    "wrong2": "Steffi Graff",
+    "wrong3": "Serena Williams"
   },
   {
     "id": "P02-021",
     "phase": "Phase02",
-    "theme": "Les Vosges",
-    "question": "Quel est le point culminant des Vosges ?",
+    "theme": "Harry Potter",
+    "question": "Quel animal fantastique est Buck ?",
     "media": null,
-    "answer": "Le Grand Ballon",
-    "wrong1": "Le Ballon d'Alsace",
-    "wrong2": "Le Hohneck",
-    "wrong3": "Le Donon",
-    "note": "Il culmine à 1424 m."
+    "answer": "Un hippogriffe",
+    "wrong1": "Un dragon",
+    "wrong2": "Un niffleur",
+    "wrong3": "Un botruc"
   },
   {
     "id": "P02-022",
     "phase": "Phase02",
-    "theme": "Les Vosges",
-    "question": "Quel parc naturel régional couvre une grande partie des Vosges ?",
-    "media": null,
-    "answer": "Le Parc naturel régional des Ballons des Vosges",
-    "wrong1": "Le Parc naturel régional des Vosges du Nord",
-    "wrong2": "Le Parc national des Vosges et du Jura",
-    "wrong3": "Le Parc naturel régional de Lorraine"
+    "theme": "Harry Potter",
+    "question": "Dans \"Harry Potter à l'école des sorciers\", qui dénonce Hagrid parce que celui-ci élève un bébé dragon dans sa cabane ?",
+    "media": "public/media/phase02/hagrid.png",
+    "answer": "Drago Malefoy",
+    "wrong1": "Harry Potter",
+    "wrong2": "Argus Rusard",
+    "wrong3": "Albus Dumbledore"
   },
   {
     "id": "P02-023",
     "phase": "Phase02",
-    "theme": "Les Vosges",
-    "question": "Quel est le numéro de département des Vosges ?",
-    "media": null,
-    "answer": "88",
-    "wrong1": "57",
-    "wrong2": "67",
-    "wrong3": "54"
+    "theme": "Harry Potter",
+    "question": "Comment s'appelle le contrôleur du Magicobus ?",
+    "media": "public/media/phase02/stan-rocade.png",
+    "answer": "Stan Rocade",
+    "wrong1": "Ernie Prang",
+    "wrong2": "Elphias Doge",
+    "wrong3": "Seamus Finnigan"
   },
   {
     "id": "P02-024",
     "phase": "Phase02",
-    "theme": "Les Vosges",
-    "question": "Quelle route panoramique longe la crête des Vosges et relie Cernay à Wissembourg ?",
-    "media": "public/media/phase02/route-des-cretes.png",
-    "answer": "La Route des Crêtes",
-    "wrong1": "La Route des Vins",
-    "wrong2": "La Route Napoléon",
-    "wrong3": "La Route du Rhin"
+    "theme": "Harry Potter",
+    "question": "Par quel magasin les Mangemorts passent-ils pour pénétrer dans Poudlard en utilisant l'Aemoire à Disparaître ?",
+    "media": null,
+    "answer": "Barjow & Beurk",
+    "wrong1": "Ollivander",
+    "wrong2": "Zonko",
+    "wrong3": "Fleury & Bott"
   },
   {
     "id": "P02-025",
-    "phase": "Phase02",
-    "theme": "Chanson française 90/2000",
-    "question": "Quel artiste a sorti l'album \"À la vie à la mort\" en 1993 ?",
-    "media": null,
-    "answer": "Pascal Obispo",
-    "wrong1": "Patrick Bruel",
-    "wrong2": "Francis Cabrel",
-    "wrong3": "Jean-Jacques Goldman"
-  },
-  {
-    "id": "P02-026",
     "phase": "Phase02",
     "theme": "Chanson française 90/2000",
     "question": "Complétez ces paroles des 'Yeux revolvers' de Marc Lavoine en 1985: 'Un peu spéciale elle est...",
@@ -632,7 +620,7 @@
     "wrong3": "Dans son univers"
   },
   {
-    "id": "P02-027",
+    "id": "P02-026",
     "phase": "Phase02",
     "theme": "Chanson française 90/2000",
     "question": "Qui a chanté \"J'ai encore rêvé d'elle\" en 1975 ?",
@@ -643,7 +631,7 @@
     "wrong3": "Chagrin d'amour"
   },
   {
-    "id": "P02-028",
+    "id": "P02-027",
     "phase": "Phase02",
     "theme": "Chanson française 90/2000",
     "question": "Comment s'appelle cette chanson de Diam's ?",
@@ -652,6 +640,17 @@
     "wrong1": "Coeur de bombe",
     "wrong2": "Jeune Demoiselle",
     "wrong3": "Par amour"
+  },
+  {
+    "id": "P02-028",
+    "phase": "Phase02",
+    "theme": "Chanson française 90/2000",
+    "question": "Quel artiste a sorti l'album \"À la vie à la mort\" en 1993 ?",
+    "media": null,
+    "answer": "Pascal Obispo",
+    "wrong1": "Patrick Bruel",
+    "wrong2": "Francis Cabrel",
+    "wrong3": "Jean-Jacques Goldman"
   },
   {
     "id": "P02-029",
@@ -668,17 +667,6 @@
     "id": "P02-030",
     "phase": "Phase02",
     "theme": "Zelda",
-    "question": "Quel opus Zelda est sorti sur Nintendo 64 en 1998 et est souvent cité comme le meilleur jeu de l'histoire ?",
-    "media": null,
-    "answer": "Ocarina of Time",
-    "wrong1": "Majora's Mask",
-    "wrong2": "A Link to the Past",
-    "wrong3": "Twilight Princess"
-  },
-  {
-    "id": "P02-031",
-    "phase": "Phase02",
-    "theme": "Zelda",
     "question": "Quel est le nom de l'antagoniste principal récurrent de la saga ?",
     "media": null,
     "answer": "Ganondorf",
@@ -687,7 +675,7 @@
     "wrong3": "Demise"
   },
   {
-    "id": "P02-032",
+    "id": "P02-031",
     "phase": "Phase02",
     "theme": "Zelda",
     "question": "Quel est le nom du royaume dans lequel se déroulent la plupart des aventures de Zelda ?",
@@ -698,7 +686,29 @@
     "wrong3": "Labrynna"
   },
   {
+    "id": "P02-032",
+    "phase": "Phase02",
+    "theme": "Zelda",
+    "question": "Dans ''Twilight Princess'', dans quel village débute l'aventure ?",
+    "media": null,
+    "answer": "Toal",
+    "wrong1": "Cocorico",
+    "wrong2": "Roal",
+    "wrong3": "Écaraille"
+  },
+  {
     "id": "P02-033",
+    "phase": "Phase02",
+    "theme": "Politique de la Ve République",
+    "question": "Quelle est l'année de la première élection présidentielle où la réforme du quinquennat est appliquée ?",
+    "media": null,
+    "answer": "2002",
+    "wrong1": "1988",
+    "wrong2": "1995",
+    "wrong3": "2007"
+  },
+  {
+    "id": "P02-034",
     "phase": "Phase02",
     "theme": "Politique de la Ve République",
     "question": "Qui a été le premier Premier Ministre de la Ve République ?",
@@ -709,7 +719,7 @@
     "wrong3": "Maurice Couve de Murville"
   },
   {
-    "id": "P02-034",
+    "id": "P02-035",
     "phase": "Phase02",
     "theme": "Politique de la Ve République",
     "question": "Qui est le premier ministre nommé par Emmanuel Macron en janvier 2024 ?",
@@ -718,17 +728,6 @@
     "wrong1": "Edouard Philippe",
     "wrong2": "Michel Barnier",
     "wrong3": "Élisabeth Borne"
-  },
-  {
-    "id": "P02-035",
-    "phase": "Phase02",
-    "theme": "Politique de la Ve République",
-    "question": "Quelle est l'année de la première élection présidentielle où la réforme du quinquennat est appliquée ?",
-    "media": null,
-    "answer": "2002",
-    "wrong1": "1988",
-    "wrong2": "1995",
-    "wrong3": "2007"
   },
   {
     "id": "P02-036",
@@ -745,13 +744,12 @@
     "id": "P02-037",
     "phase": "Phase02",
     "theme": "Les Jeux olympiques",
-    "question": "Combien de fois la France a-t-elle organisé les Jeux olympiques (été et hiver confondus) ?",
-    "media": null,
-    "answer": "5 fois",
-    "wrong1": "3 fois",
-    "wrong2": "4 fois",
-    "wrong3": "6 fois",
-    "note": "Paris (1900), Chamonix (1924), Grenoble (1968), Albertville (1992), Paris (2024)"
+    "question": "En quelle année ont eu lieu les Jeux olympiques de Moscou, boycottés par les États-Unis ?",
+    "media": "public/media/phase02/jeux-olympiques-moscou.png",
+    "answer": "1980",
+    "wrong1": "1972",
+    "wrong2": "1984",
+    "wrong3": "1976"
   },
   {
     "id": "P02-038",
@@ -768,23 +766,24 @@
     "id": "P02-039",
     "phase": "Phase02",
     "theme": "Les Jeux olympiques",
-    "question": "En quelle année ont eu lieu les Jeux olympiques de Moscou, boycottés par les États-Unis ?",
-    "media": "public/media/phase02/jeux-olympiques-moscou.png",
-    "answer": "1980",
-    "wrong1": "1972",
-    "wrong2": "1984",
-    "wrong3": "1976"
+    "question": "Qui a allumé la vasque olympique lors de la cérémonie d'ouverture des JO d'Atlanta en 1996 ?",
+    "media": null,
+    "answer": "Mohammed Ali",
+    "wrong1": "Evander Holyfield",
+    "wrong2": "Michael Jordan",
+    "wrong3": "Michael Johnson"
   },
   {
     "id": "P02-040",
     "phase": "Phase02",
     "theme": "Les Jeux olympiques",
-    "question": "Qui a allumé la vasque olympique lors de la cérémonie d'ouverture des JO d'Atlanta en 1996 ?",
-    "media": "public/media/phase02/P02-080-jo-ceremonie.mp3",
-    "answer": "Mohammed Ali",
-    "wrong1": "Evander Holyfield",
-    "wrong2": "Michael Jordan",
-    "wrong3": "Michael Johnson"
+    "question": "Combien de fois la France a-t-elle organisé les Jeux olympiques (été et hiver confondus) ?",
+    "media": null,
+    "answer": "5 fois",
+    "wrong1": "3 fois",
+    "wrong2": "4 fois",
+    "wrong3": "6 fois",
+    "note": "Paris (1900), Chamonix (1924), Grenoble (1968), Albertville (1992), Paris (2024)"
   },
   {
     "id": "P02-041",
@@ -812,24 +811,23 @@
     "id": "P02-043",
     "phase": "Phase02",
     "theme": "Friends",
-    "question": "Quel est le nom de la chanson du générique de Friends ?",
-    "media": "public/media/phase02/friend-theme.mp3",
-    "answer": "I’ll Be There for You",
-    "wrong1": "Smelly Cat",
-    "wrong2": "Oh My God",
-    "wrong3": "Let's Be Friends"
+    "question": "Parmi les 6 \"Friends\", qui est le/la plus jeune ?",
+    "media": null,
+    "answer": "Rachel",
+    "wrong1": "Ross",
+    "wrong2": "Joey",
+    "wrong3": "Monica"
   },
   {
     "id": "P02-044",
     "phase": "Phase02",
     "theme": "Friends",
-    "question": "Combien d'enfants Ross a-t-il au total à la fin de la série ?",
-    "media": null,
-    "answer": "2",
-    "wrong1": "1",
-    "wrong2": "3",
-    "wrong3": "0",
-    "note": "Ben (avec Carol) et Emma (avec Rachel)"
+    "question": "Quel est le prénom de l'agent de Joey ?",
+    "media": "public/media/phase02/estelle-friends.png",
+    "answer": "Estelle",
+    "wrong1": "Emma",
+    "wrong2": "Julia",
+    "wrong3": "Monique"
   },
   {
     "id": "P02-045",
@@ -837,7 +835,7 @@
     "theme": "Toulouse",
     "question": "Comment s'appelle cette église ?",
     "media": "public/media/phase02/saint-sernin-toulouse.png",
-    "answer": "Eglise Saint-Cernin",
+    "answer": "Eglise Saint-Sernin",
     "wrong1": "Église Saint-Jérôme",
     "wrong2": "Église Notre-Dame de la Dalbade",
     "wrong3": "L'Ariège"
@@ -879,28 +877,6 @@
     "id": "P02-049",
     "phase": "Phase02",
     "theme": "Pâtisserie",
-    "question": "Quel est fruit trouve-t-on dans une Forêt-Noire",
-    "media": null,
-    "answer": "Cerises",
-    "wrong1": "Fraise",
-    "wrong2": "Framboise",
-    "wrong3": "Myrtille"
-  },
-  {
-    "id": "P02-050",
-    "phase": "Phase02",
-    "theme": "Pâtisserie",
-    "question": "Quel est le prénom de la cantatrice pour qui Auguste Escoffir crée la pêche Melba ?",
-    "media": null,
-    "answer": "Nellie Melba",
-    "wrong1": "Jennifer Melba",
-    "wrong2": "Jeanne Melba",
-    "wrong3": "Nathalie Melba"
-  },
-  {
-    "id": "P02-051",
-    "phase": "Phase02",
-    "theme": "Pâtisserie",
     "question": "Avec quelle pâte est confectionnée un éclair au chocolat ?",
     "media": "public/media/phase02/eclair-au-chocolat.png",
     "answer": "Pâte à choux",
@@ -909,7 +885,18 @@
     "wrong3": "Pâte feuilletée"
   },
   {
-    "id": "P02-052",
+    "id": "P02-050",
+    "phase": "Phase02",
+    "theme": "Pâtisserie",
+    "question": "Quel est fruit trouve-t-on dans une Forêt-Noire ?",
+    "media": null,
+    "answer": "Cerises",
+    "wrong1": "Fraise",
+    "wrong2": "Framboise",
+    "wrong3": "Myrtille"
+  },
+  {
+    "id": "P02-051",
     "phase": "Phase02",
     "theme": "Pâtisserie",
     "question": "Quelle pâtisserie a été créée en 1856 chez Frascati, célèbre café parisien ?",
@@ -918,6 +905,17 @@
     "wrong1": "Paris-Brest",
     "wrong2": "Opéra",
     "wrong3": "Eclair au chocolat"
+  },
+  {
+    "id": "P02-052",
+    "phase": "Phase02",
+    "theme": "Pâtisserie",
+    "question": "Quel est le prénom de la cantatrice pour qui Auguste Escoffir crée la pêche Melba ?",
+    "media": null,
+    "answer": "Nellie Melba",
+    "wrong1": "Jennifer Melba",
+    "wrong2": "Jeanne Melba",
+    "wrong3": "Nathalie Melba"
   },
   {
     "id": "P02-053",
@@ -1056,6 +1054,17 @@
     "id": "P02-065",
     "phase": "Phase02",
     "theme": "Animaux",
+    "question": "Quel est le nom de cet animal ?",
+    "media": "public/media/phase02/narval.png",
+    "answer": "Le narval",
+    "wrong1": "Le requin à bosse",
+    "wrong2": "Le marsouin à corne",
+    "wrong3": "Le beluga"
+  },
+  {
+    "id": "P02-066",
+    "phase": "Phase02",
+    "theme": "Animaux",
     "question": "Combien de cœurs possède une pieuvre ?",
     "media": null,
     "answer": "3",
@@ -1064,7 +1073,7 @@
     "wrong3": "4"
   },
   {
-    "id": "P02-066",
+    "id": "P02-067",
     "phase": "Phase02",
     "theme": "Animaux",
     "question": "Comment s'appelle le cri du canard ?",
@@ -1075,7 +1084,7 @@
     "wrong3": "Le caquètement"
   },
   {
-    "id": "P02-067",
+    "id": "P02-068",
     "phase": "Phase02",
     "theme": "Animaux",
     "question": "Quel genre d'animal est le silure ?",
@@ -1084,17 +1093,6 @@
     "wrong1": "Un crustacé",
     "wrong2": "Un insecte",
     "wrong3": "Un oiseau"
-  },
-  {
-    "id": "P02-068",
-    "phase": "Phase02",
-    "theme": "Animaux",
-    "question": "Quel est le nom de cet animal ?",
-    "media": "public/media/phase02/narval.png",
-    "answer": "Le narval",
-    "wrong1": "Le requin à bosse",
-    "wrong2": "Le marsouin à corne",
-    "wrong3": "Le beluga"
   },
   {
     "id": "P02-069",
@@ -1144,10 +1142,10 @@
   {
     "id": "P03-001",
     "phase": "Phase03",
-    "theme": "Sciences & Nature",
-    "question": "Quel élément chimique a le numéro atomique 79 ?",
+    "theme": "Séries TV",
+    "question": "Dans la série How I Met Your Mother, comment s'appelle le bar où se retrouvent les protagonistes ?",
     "media": null,
-    "answer": "Or"
+    "answer": "McLaren's"
   },
   {
     "id": "P03-002",
@@ -1160,10 +1158,10 @@
   {
     "id": "P03-003",
     "phase": "Phase03",
-    "theme": "Philosophie",
-    "question": "Qui a écrit \"Ainsi parlait Zarathoustra\" ?",
+    "theme": "Jeux vidéo",
+    "question": "Depuis 2000, quel est le jeu vidéo qui s'est le plus vendu ?",
     "media": null,
-    "answer": "Friedrich Nietzsche"
+    "answer": "Minecraft"
   },
   {
     "id": "P03-004",
@@ -1176,21 +1174,29 @@
   {
     "id": "P03-005",
     "phase": "Phase03",
+    "theme": "Economie",
+    "question": "Quel pays est le premier producteur mondial de café ?",
+    "media": null,
+    "answer": "Le Brésil"
+  },
+  {
+    "id": "P03-006",
+    "phase": "Phase03",
     "theme": "Internet",
     "question": "Quel streamer est à l'origine du l'événement caritatif ZEvent ?",
     "media": null,
     "answer": "Zerator"
   },
   {
-    "id": "P03-006",
+    "id": "P03-007",
     "phase": "Phase03",
-    "theme": "Jeux vidéo",
-    "question": "Quel est le nom de la princesse que Mario cherche à sauver ?",
+    "theme": "Littérature",
+    "question": "Dans Belle du Seigneur, dans quelle organisation travaille Solal ?",
     "media": null,
-    "answer": "Peach"
+    "answer": "La Société des Nations"
   },
   {
-    "id": "P03-007",
+    "id": "P03-008",
     "phase": "Phase03",
     "theme": "Arts",
     "question": "On sait que le cinéma est le septième art, mais quel est le quatrième ?",
@@ -1198,20 +1204,12 @@
     "answer": "La musique"
   },
   {
-    "id": "P03-008",
-    "phase": "Phase03",
-    "theme": "Economie",
-    "question": "Quel pays est le premier producteur mondial de café ?",
-    "media": null,
-    "answer": "Le Brésil"
-  },
-  {
     "id": "P03-009",
     "phase": "Phase03",
     "theme": "Histoire",
-    "question": "Quel est le nom de la bataille que Guillaume le Conquérant remporte en 1066, complétant la conquête normande de l'Angleterre ?",
+    "question": "Sur le sol de quel pays moderne s'est déroulée la bataille de Rozgony, en 1312 ?",
     "media": null,
-    "answer": "Bataille d'Hastings"
+    "answer": "Slovaquie"
   },
   {
     "id": "APC-001",
