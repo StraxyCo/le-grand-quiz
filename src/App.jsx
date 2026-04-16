@@ -10,9 +10,11 @@ import { Screen01a } from './components/screens/01a_Phase1Title'
 import { Screen01b } from './components/screens/01b_PlayerTitle'
 import { Screen01c } from './components/screens/01c_QuestionChoice'
 import { Screen01f } from './components/screens/01f_Phase1Results'
-import { Screen02a, Screen02b, Screen02c } from './components/screens/02abc_Phase2'
+import { Screen02a } from './components/screens/02a_Phase2Title'
+import { Screen02b, Screen02c } from './components/screens/02abc_Phase2'
 import { Screen02e, Screen02f, Screen02g, Screen02h } from './components/screens/02efgh_Phase2'
-import { Screen03a, Screen03b, Screen03c, Screen03d, Screen03e, Screen03f, Screen03g, Screen03h, Screen03i } from './components/screens/03_Phase3'
+import { Screen03a } from './components/screens/03a_Phase3Title'
+import { Screen03b, Screen03c, Screen03d, Screen03e, Screen03f, Screen03g, Screen03h, Screen03i } from './components/screens/03_Phase3'
 import { Screen04a } from './components/screens/04a_EndScreen'
 
 const SCREEN_MAP = {

@@ -9,60 +9,45 @@ import { getShuffledOptions, shuffle } from '../../utils/questionUtils'
 
 // ─── 02e Player title ────────────────────────────────────────────────────────
 export function Screen02e() {
-  const { phase2Order, phase2CurrentIndex, goTo } = useGameStore()
+  const { phase2Order, phase2CurrentIndex, themeAssignments, goTo } = useGameStore()
   const current = phase2Order[phase2CurrentIndex]
+
+  // Compute theme progress for this player: which theme number is this?
+  const playerThemes = themeAssignments[current?.player] || []
+  const themeIndex = current ? playerThemes.indexOf(current.theme) : -1
+  const themeProgress = themeIndex >= 0
+    ? `Thème ${themeIndex + 1}/${playerThemes.length}`
+    : null
 
   if (!current) return null
 
   return (
     <div className="screen diagonal-bg">
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 20,
-        textAlign: 'center',
-        padding: '0 40px',
-      }}>
-        <div className="phase-badge anim-fade-in">Phase 02 — {current.theme}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, textAlign: 'center', padding: '0 40px' }}>
 
-        <h1 className="text-display text-gold anim-fade-in stagger-1" style={{
-          fontSize: '5.5rem',
-          lineHeight: 1,
-          textTransform: 'uppercase',
-        }}>
+        <div className="anim-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="phase-badge">Phase 02</div>
+          {themeProgress && (
+            <div className="phase-badge" style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.2)', color: 'var(--white-secondary)' }}>
+              {themeProgress}
+            </div>
+          )}
+        </div>
+
+        <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '5.5rem', lineHeight: 1, textTransform: 'uppercase' }}>
           {current.player}
         </h1>
 
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 10,
-          padding: '10px 24px',
-          borderRadius: '100px',
-          background: 'rgba(212,175,55,0.1)',
-          border: '1px solid rgba(212,175,55,0.3)',
-        }} className="anim-fade-in stagger-2">
-          <span style={{
-            fontFamily: 'var(--font-condensed)',
-            fontSize: '1.1rem',
-            color: 'var(--yellow)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-          }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 32px', borderRadius: 'var(--radius-md)', background: 'rgba(212,175,55,0.12)', border: '1.5px solid rgba(212,175,55,0.4)' }} className="anim-fade-in stagger-2">
+          <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.6rem', fontWeight: 700, color: 'var(--yellow)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {current.theme}
           </span>
         </div>
 
-        <button
-          className="btn btn-primary anim-slide-up stagger-3"
-          style={{ minWidth: 220, marginTop: 12 }}
-          onClick={() => goTo('02f')}
-        >
+        <button className="btn btn-primary anim-slide-up stagger-3" style={{ minWidth: 220, marginTop: 12 }} onClick={() => goTo('02f')}>
           Prêt·e !
         </button>
       </div>
-
       <AdminControls />
       <Watermark />
     </div>
@@ -312,11 +297,10 @@ export function Screen02g() {
 
   const handleTiebreak = () => {
     if (tiebreakGroupIdx === null) return
-    const group = groupedReversed[tiebreakGroupIdx]
-    const shuffled = [...group.players].sort(() => Math.random() - 0.5)
-    setRollingGroups(prev => ({ ...prev, [tiebreakGroupIdx]: shuffled }))
-    setRollingDone(prev => ({ ...prev, [tiebreakGroupIdx]: false }))
+    // Remove the random shuffle — instead go directly to AuPlusProche question
     setTiebreakGroupIdx(null)
+    initTiebreaker('phase2')
+    goTo('02h')
   }
 
   const handleRollingDone = (revIdx, playerIdx) => {
@@ -327,19 +311,39 @@ export function Screen02g() {
   }
 
   const handleNext = () => {
-    // Check if tiebreak needed for top 2
-    const top2Score = scores[ranking[0]]
-    const secondScore = scores[ranking[1]]
-    const tiedForSecond = ranking.filter(p => scores[p] === secondScore && ranking.indexOf(p) >= 1)
+    const top1Score = scores[ranking[0]]
+    const top2Score = scores[ranking[1]]
 
-    if (tiedForSecond.length > 1) {
-      initTiebreaker('phase2')
-      goTo('02h')
+    // Group players by their score position
+    const playersAt1st = ranking.filter(p => scores[p] === top1Score)
+    const playersAt2nd = ranking.filter(p => scores[p] === top2Score && scores[p] !== top1Score)
+
+    // CAS 01 — No tiebreak needed:
+    // - No tie at all, OR
+    // - Tie doesn't affect top 2 (e.g. 4th/5th tied), OR
+    // - Exactly the 2 finalists are clear (including case where they're tied with each other)
+    const finalistsAreClear =
+      playersAt1st.length === 1 && playersAt2nd.length === 1 ||  // perfect 1st and 2nd
+      playersAt1st.length === 1 && playersAt2nd.length === 0 ||  // only 1 person at top (can't happen with ≥2 players)
+      playersAt1st.length === 2                                   // exactly 2 tied for 1st → both go to finale
+
+    if (finalistsAreClear) {
+      if (playersAt1st.length === 2) {
+        setFinalists(playersAt1st.slice(0, 2))
+      } else {
+        setFinalists([playersAt1st[0], ...ranking.filter(p => scores[p] === top2Score).slice(0, 1)])
+      }
+      goTo('03a')
       return
     }
 
-    setFinalists(ranking.slice(0, 2))
-    goTo('03a')
+    // CAS 02 — Tiebreak for 2nd place only:
+    // P1 is clear, but 2+ players tied for 2nd
+    // CAS 03 — Tiebreak for both places:
+    // 3+ players all tied at the top
+    // Either way → go to 02h (AuPlusProche)
+    initTiebreaker('phase2')
+    goTo('02h')
   }
 
   const ALL_NAMES = ['Amandine', 'Catherine', 'Hélène', 'Léa', 'Matthieu', 'Nicolas']
@@ -402,7 +406,9 @@ export function Screen02g() {
 
         <div style={{ display: 'flex', gap: 10 }}>
           {tiebreakGroupIdx !== null && (
-            <button className="btn btn-secondary" style={{ minWidth: 180 }} onClick={handleTiebreak}>🎲 Départager</button>
+            <button className="btn btn-secondary" style={{ minWidth: 220 }} onClick={handleTiebreak}>
+              Question au plus proche →
+            </button>
           )}
           {tiebreakGroupIdx === null && !done && (
             <button className="btn btn-primary" style={{ minWidth: 180 }} onClick={handleReveal}>Révéler ↓</button>
@@ -419,33 +425,54 @@ export function Screen02g() {
 }
 
 
-// ─── 02h Tiebreaker ───────────────────────────────────────────────────────────
+// ─── 02h Tiebreaker — Au Plus Proche ─────────────────────────────────────────
+// Step 1: rules explanation
+// Step 2: question + timer
+// Step 3: reveal answer + admin selects finalist(s)
 export function Screen02h() {
-  const { tiebreakerQuestion, phase2Ranking, scores: rawScores, currentScores, setFinalists, goTo } = useGameStore()
-  const q = tiebreakerQuestion
+  const { tiebreakerQuestion, setFinalists, goTo, initTiebreaker } = useGameStore()
 
-  const [step, setStep] = useState('question') // 'question' | 'answer'
+  const ranking = useGameStore.getState().phase2Ranking
+  const scores = useGameStore.getState().currentScores
+
+  const top1Score = scores[ranking[0]]
+  const top2Score = scores[ranking[1]]
+  const playersAt1st = ranking.filter(p => scores[p] === top1Score)
+
+  // CAS 02: 1 clear first, 2+ tied for second
+  // CAS 03: 3+ tied at the very top (top1Score === top2Score, playersAt1st.length >= 3)
+  const isCas03 = playersAt1st.length >= 3  // 3+ at same top score
+  const isCas02 = !isCas03 && playersAt1st.length === 1  // clear P1, tie for 2nd
+
+  // Players who participate in the tiebreak
+  const tiedPlayers = isCas03
+    ? playersAt1st  // all tied at top
+    : ranking.filter(p => scores[p] === top2Score && scores[p] !== top1Score)  // tied for 2nd only
+
+  // How many finalists to select from the tiebreak group
+  const neededFromTied = isCas03 ? 2 : 1
+
+  const q = tiebreakerQuestion
+  const [step, setStep] = useState('rules') // 'rules' | 'question' | 'answer'
   const [winners, setWinners] = useState([])
   const { timeLeft, running, finished, progress, urgent, start, skip } = useTimer(30)
 
-  // Find tied players
-  const ranking = useGameStore.getState().phase2Ranking
-  const scores = useGameStore.getState().currentScores
-  const secondScore = scores[ranking[1]] || 0
-  const tiedPlayers = ranking.filter(p => scores[p] === secondScore && ranking.indexOf(p) >= 1)
-
-  useEffect(() => { if (step === 'question') start() }, [step])
-
   const toggleWinner = (p) => {
-    setWinners(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p])
+    setWinners(prev =>
+      prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]
+    )
   }
 
-  const needed = tiedPlayers.length - 1 // how many to select
-
   const handleValidate = () => {
-    const finalist1 = ranking[0]
-    const finalist2 = winners[0]
-    setFinalists([finalist1, finalist2])
+    let finalists
+    if (isCas03) {
+      // 3+ tied at top → admin selected 2 from tiedPlayers
+      finalists = winners.slice(0, 2)
+    } else {
+      // CAS 02 — clear P1 + 1 selected from tied 2nd group
+      finalists = [playersAt1st[0], winners[0]]
+    }
+    setFinalists(finalists)
     goTo('03a')
   }
 
@@ -453,30 +480,48 @@ export function Screen02h() {
 
   return (
     <div className="screen diagonal-bg">
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: 760,
-        padding: '0 40px',
-        gap: 24,
-      }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: 760, padding: '0 40px', gap: 24 }}>
 
+        {/* ── RULES STEP ── */}
+        {step === 'rules' && (
+          <>
+            <div className="phase-badge anim-fade-in">Départage</div>
+            <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '3.5rem', lineHeight: 1 }}>
+              Au Plus Proche
+            </h1>
+            <div className="anim-fade-in stagger-2" style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 520, width: '100%' }}>
+              {[
+                isCas03
+                  ? `Égalité pour les 2 premières places : ${tiedPlayers.join(', ')}`
+                  : `Égalité pour la 2e place : ${tiedPlayers.join(', ')}`,
+                'Une question avec une réponse numérique va être posée.',
+                isCas03
+                  ? "Les 2 joueur·euses qui s'approchent le plus de la bonne réponse passent en finale."
+                  : "Le·la joueur·euse qui s'approche le plus de la bonne réponse rejoint le 1er en finale.",
+                "En cas d'égalité parfaite : chifoumi.",
+              ].map((rule, i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: i === 0 ? 'var(--yellow)' : 'var(--white-secondary)', fontWeight: i === 0 ? 700 : 400 }}>
+                  {i > 0 && <span style={{ color: 'var(--yellow)', fontSize: '0.6rem', marginTop: 6, flexShrink: 0 }}>◆</span>}
+                  {rule}
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-primary anim-slide-up stagger-3" style={{ minWidth: 240 }}
+              onClick={() => { setStep('question'); start() }}>
+              Lancer la question →
+            </button>
+          </>
+        )}
+
+        {/* ── QUESTION + TIMER STEP ── */}
         {step === 'question' && (
           <>
-            <div className="phase-badge anim-fade-in">Départage — Au plus proche</div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <h2 className="anim-fade-in stagger-1" style={{
-                fontFamily: 'var(--font-condensed)',
-                fontWeight: 700,
-                fontSize: '2rem',
-                lineHeight: 1.3,
-                flex: 1,
-              }}>
+            <div className="phase-badge anim-fade-in">Au plus proche — Départage</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 24 }}>
+              <h2 className="anim-fade-in stagger-1" style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '2rem', lineHeight: 1.3, flex: 1 }}>
                 {q.question}
               </h2>
-              <TimerRing timeLeft={timeLeft} progress={progress} urgent={urgent} size={80} />
+              <TimerRing timeLeft={timeLeft} progress={progress} urgent={urgent} size={88} />
             </div>
             <button className="btn btn-primary" style={{ minWidth: 220 }} onClick={() => { skip(); setStep('answer') }}>
               Voir la réponse →
@@ -484,38 +529,23 @@ export function Screen02h() {
           </>
         )}
 
+        {/* ── ANSWER + FINALIST SELECTION STEP ── */}
         {step === 'answer' && (
           <>
-            <div className="phase-badge anim-fade-in">Résultat du départage</div>
-            <h2 style={{
-              fontFamily: 'var(--font-condensed)',
-              fontWeight: 700,
-              fontSize: '1.6rem',
-              color: 'var(--white-secondary)',
-              textAlign: 'center',
-            }}>
+            <div className="phase-badge anim-fade-in">Résultat</div>
+            <h2 style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '1.6rem', color: 'var(--white-secondary)', textAlign: 'center' }}>
               {q.question}
             </h2>
-
-            <div style={{
-              padding: '20px 36px',
-              borderRadius: 'var(--radius-md)',
-              background: 'rgba(212,175,55,0.08)',
-              border: '1.5px solid rgba(212,175,55,0.35)',
-              textAlign: 'center',
-              minWidth: 300,
-            }}>
-              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.65rem', color: 'var(--yellow)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 8 }}>
-                La bonne réponse
-              </div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--white)' }}>
-                {q.answer}
-              </div>
+            <div style={{ padding: '20px 36px', borderRadius: 'var(--radius-md)', background: 'rgba(212,175,55,0.08)', border: '1.5px solid rgba(212,175,55,0.35)', textAlign: 'center', minWidth: 300 }}>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.65rem', color: 'var(--yellow)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 8 }}>La bonne réponse</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--white)' }}>{q.answer}</div>
             </div>
 
             <div style={{ textAlign: 'center' }}>
               <p style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.9rem', color: 'var(--white-secondary)', marginBottom: 14, letterSpacing: '0.05em' }}>
-                Qui s'est le plus approché·e ? Sélectionne le/la finaliste
+                {isCas03
+                  ? 'Sélectionne les 2 finalistes (les plus proches)'
+                  : "Sélectionne le·la finaliste qui s'est le plus approché·e"}
               </p>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                 {tiedPlayers.map(p => (
@@ -534,7 +564,7 @@ export function Screen02h() {
             <button
               className="btn btn-primary"
               style={{ minWidth: 220 }}
-              disabled={winners.length !== needed}
+              disabled={winners.length !== neededFromTied}
               onClick={handleValidate}
             >
               Passer à la Finale →
@@ -542,7 +572,6 @@ export function Screen02h() {
           </>
         )}
       </div>
-
       <AdminControls />
       <Watermark />
     </div>

@@ -3,38 +3,6 @@ import { useGameStore } from '../../store/gameStore'
 import { Watermark } from '../ui/Watermark'
 import { AdminControls } from '../admin/AdminControls'
 
-// ─── 02a Phase 2 Title ────────────────────────────────────────────────────────
-export function Screen02a() {
-  const { goTo } = useGameStore()
-  return (
-    <div className="screen diagonal-bg">
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '0 40px', textAlign: 'center', maxWidth: 720 }}>
-        <div className="phase-badge anim-fade-in">Phase 02</div>
-        <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '5rem', lineHeight: 1 }}>Les Thèmes</h1>
-        <div className="separator anim-fade-in stagger-2" style={{ maxWidth: 360 }}>✦</div>
-        <div className="anim-fade-in stagger-3" style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 540 }}>
-          {[
-            "Les thèmes sont dévoilés un par un",
-            "Dans l'ordre du classement, chacun·e s'attribue un thème et en donne un à quelqu'un d'autre",
-            "Puis chacun·e joue les questions de ses thèmes — 4 questions par thème",
-            "Les 2 premiers au cumulé accèdent à la Finale !",
-          ].map((rule, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--white-secondary)', textAlign: 'left' }}>
-              <span style={{ color: 'var(--yellow)', fontSize: '0.6rem', marginTop: 6, flexShrink: 0 }}>◆</span>
-              {rule}
-            </div>
-          ))}
-        </div>
-        <button className="btn btn-primary anim-slide-up stagger-4" style={{ minWidth: 260, marginTop: 8 }} onClick={() => goTo('02b')}>
-          Dévoiler les thèmes →
-        </button>
-      </div>
-      <AdminControls />
-      <Watermark />
-    </div>
-  )
-}
-
 // ─── 02b Theme Reveal ─────────────────────────────────────────────────────────
 export function Screen02b() {
   const { availableThemes, goTo } = useGameStore()

@@ -5,75 +5,6 @@ import { TimerRing } from '../ui/Timer'
 import { Watermark } from '../ui/Watermark'
 import { AdminControls } from '../admin/AdminControls'
 
-// ─── 03a Title ────────────────────────────────────────────────────────────────
-export function Screen03a() {
-  const { finalists, goTo, initPhase3 } = useGameStore()
-
-  const handleStart = () => {
-    initPhase3()
-    goTo('03b')
-  }
-
-  return (
-    <div className="screen diagonal-bg">
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 24,
-        padding: '0 40px',
-        textAlign: 'center',
-        maxWidth: 720,
-      }}>
-        <div className="phase-badge anim-fade-in">Phase 03</div>
-
-        <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '5.5rem', lineHeight: 1 }}>
-          La Finale
-        </h1>
-
-        {finalists?.length === 2 && (
-          <div className="anim-fade-in stagger-2" style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.6rem', fontWeight: 700 }}>
-              {finalists[0]}
-            </span>
-            <span style={{ color: 'var(--yellow)', fontSize: '1.2rem' }}>VS</span>
-            <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.6rem', fontWeight: 700 }}>
-              {finalists[1]}
-            </span>
-          </div>
-        )}
-
-        <div className="separator anim-fade-in stagger-2" style={{ maxWidth: 360 }}>✦</div>
-
-        <div className="anim-fade-in stagger-3" style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 520 }}>
-          {[
-            '8 questions, posées l\'une après l\'autre',
-            'Chaque finaliste répond séparément — sans voir la réponse de l\'autre',
-            'Le reveal se fait à la fin, question par question',
-            'Le·la gagnant·e est celui ou celle qui a le plus de bonnes réponses',
-          ].map((rule, i) => (
-            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', textAlign: 'left', fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--white-secondary)' }}>
-              <span style={{ color: 'var(--yellow)', fontSize: '0.6rem', marginTop: 6, flexShrink: 0 }}>◆</span>
-              {rule}
-            </div>
-          ))}
-        </div>
-
-        <button
-          className="btn btn-primary anim-slide-up stagger-4"
-          style={{ minWidth: 260, marginTop: 8 }}
-          onClick={handleStart}
-        >
-          Lancer la Finale →
-        </button>
-      </div>
-
-      <AdminControls />
-      <Watermark />
-    </div>
-  )
-}
-
 // ─── 03b Question title ────────────────────────────────────────────────────────
 export function Screen03b() {
   const { phase3Questions, phase3CurrentQuestionIndex, finalists, goTo } = useGameStore()
@@ -578,15 +509,15 @@ export function Screen03g() {
 
         {/* Score — only shown once all rows revealed */}
         {allRevealed && (
-          <div className="anim-scale-in" style={{ display: 'flex', gap: 40, alignItems: 'center', marginTop: 8 }}>
+          <div className="anim-scale-in" style={{ display: 'flex', gap: 40, alignItems: 'center', marginTop: 4 }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{player1}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: p1Score > p2Score ? 'var(--yellow)' : 'var(--white-secondary)' }}>{p1Score}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.8rem', color: p1Score > p2Score ? 'var(--yellow)' : 'var(--white-secondary)' }}>{p1Score}</div>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.7rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>{player1}</div>
             </div>
             <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.2rem', color: 'rgba(255,255,255,0.3)' }}>—</div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{player2}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: p2Score > p1Score ? 'var(--yellow)' : 'var(--white-secondary)' }}>{p2Score}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.8rem', color: p2Score > p1Score ? 'var(--yellow)' : 'var(--white-secondary)' }}>{p2Score}</div>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.7rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>{player2}</div>
             </div>
           </div>
         )}
