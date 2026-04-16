@@ -183,7 +183,7 @@
     "theme": "Sport",
     "question": "En athlétisme, combien de kilomètres sont courus pendant un marathon ?",
     "media": "public/media/phase01/marathon.png",
-    "answer": "42,195 km",
+    "answer": "42 km",
     "wrong1": "40 km",
     "wrong2": "45 km",
     "wrong3": "50 km",
