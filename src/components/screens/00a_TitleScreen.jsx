@@ -2,20 +2,12 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Watermark } from '../ui/Watermark'
 
-// Screen has 2 phases:
-// 'title'  — logo + "Démarrer" button (triggers video)
-// 'video'  — fullscreen video, then "Commencer" button → 00b
-
 export function Screen00a() {
   const { goTo, testMode, setTestMode } = useGameStore()
   const videoRef = useRef(null)
   const [phase, setPhase] = useState('title') // 'title' | 'video'
   const [videoEnded, setVideoEnded] = useState(false)
   const [videoError, setVideoError] = useState(false)
-
-  const startVideo = () => {
-    setPhase('video')
-  }
 
   useEffect(() => {
     if (phase !== 'video') return
@@ -28,10 +20,16 @@ export function Screen00a() {
     })
   }, [phase])
 
+  const handleSkip = () => {
+    const vid = videoRef.current
+    if (vid) { vid.pause(); vid.currentTime = vid.duration || 9999 }
+    setVideoEnded(true)
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
 
-      {/* ── TITLE PHASE ─────────────────────────────────────────── */}
+      {/* ── TITLE PHASE ── */}
       {phase === 'title' && (
         <div className="screen diagonal-bg" style={{ justifyContent: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, padding: '0 40px' }}>
@@ -42,7 +40,7 @@ export function Screen00a() {
             <button
               className="btn btn-primary anim-slide-up stagger-3"
               style={{ minWidth: 280, fontSize: '1.3rem', padding: '20px 56px' }}
-              onClick={startVideo}
+              onClick={() => setPhase('video')}
             >
               Démarrer
             </button>
@@ -50,7 +48,7 @@ export function Screen00a() {
         </div>
       )}
 
-      {/* ── VIDEO PHASE ─────────────────────────────────────────── */}
+      {/* ── VIDEO PHASE ── */}
       {phase === 'video' && (
         <div style={{ width: '100%', height: '100%', background: '#000', position: 'relative' }}>
           {!videoError && (
@@ -64,23 +62,25 @@ export function Screen00a() {
             />
           )}
 
-          {/* Passer (discret) */}
-          <button
-            className="btn btn-ghost"
-            style={{ position: 'absolute', top: 20, left: 20, opacity: 0.5, zIndex: 10 }}
-            onClick={() => setVideoEnded(true)}
-          >
-            Passer →
-          </button>
+          {/* Passer — discret, haut gauche, toujours visible pendant la vidéo */}
+          {!videoEnded && (
+            <button
+              className="btn btn-ghost"
+              style={{ position: 'absolute', top: 20, left: 20, opacity: 0.45, zIndex: 10, fontSize: '0.75rem', padding: '6px 14px' }}
+              onClick={handleSkip}
+            >
+              Passer →
+            </button>
+          )}
 
-          {/* Commencer — apparaît après la fin */}
+          {/* Commencer — uniquement après fin de vidéo */}
           {(videoEnded || videoError) && (
             <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'flex-end',
               paddingBottom: 80,
-              animation: 'fadeIn 0.5s ease both',
+              animation: 'fadeIn 0.6s ease both',
             }}>
               <button
                 className="btn btn-primary"
@@ -94,7 +94,7 @@ export function Screen00a() {
         </div>
       )}
 
-      {/* ── TEST / JEU toggle — always visible ──────────────────── */}
+      {/* ── TEST / JEU toggle ── */}
       <div style={{ position: 'fixed', top: 20, right: 24, display: 'flex', alignItems: 'center', gap: 10, zIndex: 20 }}>
         <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: testMode ? 'var(--yellow)' : 'rgba(255,255,255,0.5)' }}>
           {testMode ? 'Mode Test' : 'Mode Jeu'}

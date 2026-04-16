@@ -1,7 +1,15 @@
 import { useRef, useCallback } from 'react'
 
-// Singleton audio instances reused across calls
 const audioInstances = {}
+
+// Normalize name: remove accents, lowercase
+function normalizeName(name) {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // strip combining diacritics
+    .replace(/\s+/g, '-')
+}
 
 function getAudio(src) {
   if (!audioInstances[src]) {
@@ -11,8 +19,6 @@ function getAudio(src) {
 }
 
 export function useAudio() {
-  const countdownRef = useRef(null)
-
   const play = useCallback((src, { loop = false, volume = 1 } = {}) => {
     try {
       const audio = getAudio(src)
@@ -25,29 +31,24 @@ export function useAudio() {
 
   const stop = useCallback((src) => {
     try {
-      if (src) {
-        const audio = getAudio(src)
-        audio.pause()
-        audio.currentTime = 0
-      }
+      const audio = getAudio(src)
+      audio.pause()
+      audio.currentTime = 0
     } catch (e) {}
   }, [])
 
   const stopAll = useCallback(() => {
     Object.values(audioInstances).forEach(a => {
-      a.pause()
-      a.currentTime = 0
+      try { a.pause(); a.currentTime = 0 } catch (e) {}
     })
   }, [])
 
-  const playVictory = useCallback((playerName) => {
-    stopAll()
-    play(`/media/phase04/${playerName.toLowerCase()}.mp3`, { volume: 0.9 })
-  }, [play, stopAll])
-
-  const playTitleTheme = useCallback(() => {
-    play('/media/structure/title-theme.mp3', { volume: 0.7 })
-  }, [play])
+  // Pause all without resetting position (for a "pause" button)
+  const pauseAll = useCallback(() => {
+    Object.values(audioInstances).forEach(a => {
+      try { a.pause() } catch (e) {}
+    })
+  }, [])
 
   const playCountdown = useCallback(() => {
     play('/media/structure/countdown.mp3', { volume: 0.6 })
@@ -61,10 +62,21 @@ export function useAudio() {
     play('/media/structure/gong.mp3', { volume: 0.9 })
   }, [play])
 
+  const playTitleTheme = useCallback(() => {
+    play('/media/structure/title-theme.mp3', { volume: 0.7 })
+  }, [play])
+
+  const playVictory = useCallback((playerName) => {
+    stopAll()
+    const normalized = normalizeName(playerName)
+    play(`/media/phase04/${normalized}.mp3`, { volume: 0.9 })
+  }, [play, stopAll])
+
   return {
     play,
     stop,
     stopAll,
+    pauseAll,
     playCountdown,
     stopCountdown,
     playGong,

@@ -245,16 +245,17 @@ export function Screen03cd({ playerStep }) {
           />
         )}
 
-        {/* Next */}
+        {/* Next — only visible after timer started AND answer typed */}
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button
-            className="btn btn-primary"
-            style={{ minWidth: 200 }}
-            disabled={timerStarted && !answer.trim()}
-            onClick={handleNext}
-          >
-            {playerStep === 'player1' ? `Passer à ${secondPlayer} →` : 'Question suivante →'}
-          </button>
+          {timerStarted && answer.trim() && (
+            <button
+              className="btn btn-primary"
+              style={{ minWidth: 200 }}
+              onClick={handleNext}
+            >
+              {playerStep === 'player1' ? `Passer à ${secondPlayer} →` : 'Question suivante →'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -477,8 +478,18 @@ export function Screen03g() {
   const { phase3Questions, phase3Answers, finalists, setFinalWinner, initTiebreaker, goTo } = useGameStore()
 
   const [revealed, setRevealed] = useState(0)
-  const [autoAdvance, setAutoAdvance] = useState(false)
+  const [readyToAdvance, setReadyToAdvance] = useState(false)
 
+  const player1 = finalists[0]
+  const player2 = finalists[1]
+
+  const allRevealed = revealed >= phase3Questions.length
+
+  // Compute scores only from revealed rows
+  const p1Score = phase3Answers.slice(0, revealed).filter(a => a?.player1Correct).length
+  const p2Score = phase3Answers.slice(0, revealed).filter(a => a?.player2Correct).length
+
+  // Auto-reveal rows one by one, 600ms apart
   useEffect(() => {
     if (revealed < phase3Questions.length) {
       const t = setTimeout(() => setRevealed(r => r + 1), 600)
@@ -486,26 +497,11 @@ export function Screen03g() {
     }
   }, [revealed, phase3Questions.length])
 
-  // Compute scores
-  const p1Score = phase3Answers.filter(a => a?.player1Correct).length
-  const p2Score = phase3Answers.filter(a => a?.player2Correct).length
-  const qIndex0 = 0
-  const firstInQ1 = finalists[0]
-  const player1 = finalists[0]
-  const player2 = finalists[1]
-
-  const allRevealed = revealed >= phase3Questions.length
-
-  useEffect(() => {
-    if (allRevealed && p1Score !== p2Score) {
-      const t = setTimeout(() => {
-        const winner = p1Score > p2Score ? player1 : player2
-        setFinalWinner(winner)
-        goTo('04a')
-      }, 5000)
-      return () => clearTimeout(t)
-    }
-  }, [allRevealed, p1Score, p2Score])
+  const handleNext = () => {
+    const winner = p1Score > p2Score ? player1 : player2
+    setFinalWinner(winner)
+    goTo('04a')
+  }
 
   const handleTiebreak = () => {
     initTiebreaker('phase3')
@@ -515,78 +511,99 @@ export function Screen03g() {
   return (
     <div className="screen diagonal-bg">
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        maxWidth: 760,
-        padding: '20px 40px',
-        gap: 20,
-        alignItems: 'center',
-        height: '100%',
-        justifyContent: 'center',
+        display: 'flex', flexDirection: 'column', width: '100%',
+        maxWidth: 760, padding: '20px 40px', gap: 16,
+        alignItems: 'center', height: '100%', justifyContent: 'center',
       }}>
 
         <div className="phase-badge anim-fade-in">Résultats de la Finale</div>
 
-        {/* Score header */}
-        <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.8rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{player1}</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: 'var(--yellow)' }}>{p1Score}</div>
+        {/* Table with player name headers */}
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+          {/* Header row */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '32px 1fr 72px 72px',
+            gap: 12,
+            padding: '8px 16px',
+            marginBottom: 4,
+          }}>
+            <span />
+            <span />
+            <span style={{ textAlign: 'center', fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--yellow)' }}>
+              {player1}
+            </span>
+            <span style={{ textAlign: 'center', fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--yellow)' }}>
+              {player2}
+            </span>
           </div>
-          <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.2rem', color: 'rgba(255,255,255,0.3)' }}>VS</div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.8rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{player2}</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: 'var(--yellow)' }}>{p2Score}</div>
+
+          {/* Question rows */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {phase3Questions.slice(0, revealed).map((q, i) => {
+              const ans = phase3Answers[i] || {}
+              return (
+                <div key={i} className="anim-fade-in" style={{
+                  display: 'grid',
+                  gridTemplateColumns: '32px 1fr 72px 72px',
+                  gap: 12,
+                  alignItems: 'center',
+                  padding: '10px 16px',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                }}>
+                  <span style={{ fontFamily: 'var(--font-display)', color: 'var(--yellow)', fontSize: '1rem' }}>{i + 1}</span>
+                  <span style={{ fontFamily: 'var(--font-body)', color: 'var(--white-secondary)', fontSize: '0.85rem' }}>
+                    {q.question.length > 60 ? q.question.slice(0, 60) + '…' : q.question}
+                  </span>
+                  <span style={{
+                    textAlign: 'center', fontSize: '1.2rem',
+                    color: ans.player1Correct === true ? 'var(--green)' : ans.player1Correct === false ? 'var(--red)' : 'rgba(255,255,255,0.3)',
+                  }}>
+                    {ans.player1Correct === true ? '✓' : ans.player1Correct === false ? '✗' : '—'}
+                  </span>
+                  <span style={{
+                    textAlign: 'center', fontSize: '1.2rem',
+                    color: ans.player2Correct === true ? 'var(--green)' : ans.player2Correct === false ? 'var(--red)' : 'rgba(255,255,255,0.3)',
+                  }}>
+                    {ans.player2Correct === true ? '✓' : ans.player2Correct === false ? '✗' : '—'}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         </div>
 
-        {/* Q by Q table */}
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {phase3Questions.slice(0, revealed).map((q, i) => {
-            const ans = phase3Answers[i] || {}
-            const qFirstPlayer = i % 2 === 0 ? player1 : player2
-            const qSecondPlayer = i % 2 === 0 ? player2 : player1
-            return (
-              <div key={i} className="anim-fade-in" style={{
-                display: 'grid',
-                gridTemplateColumns: '32px 1fr 40px 40px',
-                gap: 12,
-                alignItems: 'center',
-                padding: '10px 16px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.05)',
-                fontSize: '0.85rem',
-              }}>
-                <span style={{ fontFamily: 'var(--font-display)', color: 'var(--yellow)', fontSize: '1rem' }}>{i + 1}</span>
-                <span style={{ fontFamily: 'var(--font-body)', color: 'var(--white-secondary)' }}>{q.question.slice(0, 60)}…</span>
-                <span style={{ textAlign: 'center', fontSize: '1.1rem' }}>
-                  {ans.player1Correct === true ? '✓' : ans.player1Correct === false ? '✗' : '—'}
-                </span>
-                <span style={{ textAlign: 'center', fontSize: '1.1rem' }}>
-                  {ans.player2Correct === true ? '✓' : ans.player2Correct === false ? '✗' : '—'}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-
-        {allRevealed && p1Score === p2Score && (
-          <div className="anim-fade-in" style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--font-body)', color: 'var(--white-secondary)', marginBottom: 16 }}>
-              Égalité parfaite ! Une question de départage s'impose.
-            </p>
-            <button className="btn btn-primary" style={{ minWidth: 200 }} onClick={handleTiebreak}>
-              Départager →
-            </button>
+        {/* Score — only shown once all rows revealed */}
+        {allRevealed && (
+          <div className="anim-scale-in" style={{ display: 'flex', gap: 40, alignItems: 'center', marginTop: 8 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{player1}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: p1Score > p2Score ? 'var(--yellow)' : 'var(--white-secondary)' }}>{p1Score}</div>
+            </div>
+            <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.2rem', color: 'rgba(255,255,255,0.3)' }}>—</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', color: 'var(--white-secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{player2}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: p2Score > p1Score ? 'var(--yellow)' : 'var(--white-secondary)' }}>{p2Score}</div>
+            </div>
           </div>
         )}
 
-        {allRevealed && p1Score !== p2Score && (
-          <p style={{ fontFamily: 'var(--font-body)', color: 'var(--white-secondary)', fontSize: '0.85rem', fontStyle: 'italic' }}>
-            Révélation du gagnant dans quelques instants…
-          </p>
+        {/* Actions — only after all revealed */}
+        {allRevealed && (
+          <div className="anim-fade-in" style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+            {p1Score === p2Score ? (
+              <button className="btn btn-primary" style={{ minWidth: 200 }} onClick={handleTiebreak}>
+                Départager →
+              </button>
+            ) : (
+              <button className="btn btn-primary" style={{ minWidth: 260 }} onClick={handleNext}>
+                Révéler le classement final →
+              </button>
+            )}
+          </div>
         )}
       </div>
 
