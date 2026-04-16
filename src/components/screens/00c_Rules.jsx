@@ -22,7 +22,7 @@ const RULES = [
   {
     icon: '🏆',
     title: 'La Finale',
-    desc: 'Les 2 premiers au classement s'affrontent en tête-à-tête pour le titre.',
+    desc: "Les 2 premiers au classement s'affrontent en tête-à-tête pour le titre.",
   },
 ]
 

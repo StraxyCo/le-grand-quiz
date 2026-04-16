@@ -90,7 +90,6 @@ export function Screen00a() {
             width: 16,
             height: 16,
             borderRadius: '50%',
-            background: 'white',
             transform: testMode ? 'translateX(20px)' : 'none',
             transition: 'transform 0.2s var(--ease-spring)',
             boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
