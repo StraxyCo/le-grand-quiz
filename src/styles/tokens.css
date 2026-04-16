@@ -407,6 +407,13 @@ button {
   stroke: var(--red);
 }
 
+.timer-ring .timer-progress.finished {
+  stroke: var(--red);
+  fill: var(--red);
+  stroke-width: 0;
+  r: 36;
+}
+
 .timer-ring .timer-label {
   position: absolute;
   font-family: var(--font-display);

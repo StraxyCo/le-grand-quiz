@@ -1,103 +1,51 @@
-// ─── 02a Phase 2 Title ────────────────────────────────────────────────────
 import React, { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Watermark } from '../ui/Watermark'
 import { AdminControls } from '../admin/AdminControls'
 
+// ─── 02a Phase 2 Title ────────────────────────────────────────────────────────
 export function Screen02a() {
   const { goTo } = useGameStore()
-
   return (
     <div className="screen diagonal-bg">
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 24,
-        padding: '0 40px',
-        textAlign: 'center',
-        maxWidth: 720,
-      }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '0 40px', textAlign: 'center', maxWidth: 720 }}>
         <div className="phase-badge anim-fade-in">Phase 02</div>
-
-        <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '5rem', lineHeight: 1 }}>
-          Les Thèmes
-        </h1>
-
+        <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '5rem', lineHeight: 1 }}>Les Thèmes</h1>
         <div className="separator anim-fade-in stagger-2" style={{ maxWidth: 360 }}>✦</div>
-
-        <div className="anim-fade-in stagger-3" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 10,
-          maxWidth: 540,
-        }}>
+        <div className="anim-fade-in stagger-3" style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 540 }}>
           {[
-            'Les thèmes sont dévoilés un par un',
-            'Dans l\'ordre du classement, chacun·e s\'attribue un thème et en donne un à quelqu\'un d\'autre',
-            'Puis chacun·e joue les questions de ses thèmes — 4 questions par thème',
-            'Les 2 premiers au cumulé accèdent à la Finale !',
+            "Les thèmes sont dévoilés un par un",
+            "Dans l'ordre du classement, chacun·e s'attribue un thème et en donne un à quelqu'un d'autre",
+            "Puis chacun·e joue les questions de ses thèmes — 4 questions par thème",
+            "Les 2 premiers au cumulé accèdent à la Finale !",
           ].map((rule, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 12,
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.95rem',
-              color: 'var(--white-secondary)',
-              textAlign: 'left',
-            }}>
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--white-secondary)', textAlign: 'left' }}>
               <span style={{ color: 'var(--yellow)', fontSize: '0.6rem', marginTop: 6, flexShrink: 0 }}>◆</span>
               {rule}
             </div>
           ))}
         </div>
-
-        <button
-          className="btn btn-primary anim-slide-up stagger-4"
-          style={{ minWidth: 260, marginTop: 8 }}
-          onClick={() => goTo('02b')}
-        >
+        <button className="btn btn-primary anim-slide-up stagger-4" style={{ minWidth: 260, marginTop: 8 }} onClick={() => goTo('02b')}>
           Dévoiler les thèmes →
         </button>
       </div>
-
       <AdminControls />
       <Watermark />
     </div>
   )
 }
 
-// ─── 02b Theme Reveal ─────────────────────────────────────────────────────
+// ─── 02b Theme Reveal ─────────────────────────────────────────────────────────
 export function Screen02b() {
   const { availableThemes, goTo } = useGameStore()
   const [revealed, setRevealed] = useState(0)
   const allRevealed = revealed >= availableThemes.length
-
   return (
     <div className="screen diagonal-bg">
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: 860,
-        padding: '0 40px',
-        gap: 24,
-      }}>
-
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: 860, padding: '0 40px', gap: 24 }}>
         <div className="phase-badge anim-fade-in">Les thèmes</div>
-        <h2 className="text-condensed anim-fade-in stagger-1" style={{ fontSize: '2rem' }}>
-          Découvrez les thèmes disponibles
-        </h2>
-
-        {/* Theme grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: 10,
-          width: '100%',
-        }}>
+        <h2 className="text-condensed anim-fade-in stagger-1" style={{ fontSize: '2rem' }}>Découvrez les thèmes disponibles</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, width: '100%' }}>
           {availableThemes.map((theme, i) => (
             <div key={i} style={{
               padding: '14px 12px',
@@ -109,7 +57,7 @@ export function Screen02b() {
               fontSize: '0.85rem',
               fontWeight: 700,
               letterSpacing: '0.04em',
-              color: i < revealed ? 'var(--white)' : 'transparent',
+              color: i < revealed ? 'var(--white)' : 'rgba(255,255,255,0.15)',
               transition: 'all 0.35s var(--ease-out)',
               minHeight: 56,
               display: 'flex',
@@ -120,36 +68,36 @@ export function Screen02b() {
             </div>
           ))}
         </div>
-
         <div style={{ display: 'flex', gap: 12 }}>
           {!allRevealed && (
-            <button
-              className="btn btn-primary"
-              style={{ minWidth: 200 }}
-              onClick={() => setRevealed(r => r + 1)}
-            >
+            <button className="btn btn-primary" style={{ minWidth: 200 }} onClick={() => setRevealed(r => r + 1)}>
               Révéler un thème
             </button>
           )}
           {allRevealed && (
-            <button
-              className="btn btn-primary"
-              style={{ minWidth: 220 }}
-              onClick={() => goTo('02c')}
-            >
+            <button className="btn btn-primary" style={{ minWidth: 220 }} onClick={() => goTo('02c')}>
               Passer à l'attribution →
             </button>
           )}
         </div>
       </div>
-
       <AdminControls />
       <Watermark />
     </div>
   )
 }
 
-// ─── 02c Theme Attribution ────────────────────────────────────────────────
+// ─── 02c Theme Attribution ────────────────────────────────────────────────────
+//
+// ROUND A: each player (in phase1Ranking order) does 2 actions:
+//   1. Picks 1 theme for themselves (always possible — protected slot)
+//   2. Assigns 1 theme to another player
+//      Constraint: a player can receive max 2 themes FROM OTHERS in Round A
+//      (so they always have a slot for their own pick)
+//
+// ROUND B: same order, skip players who already have 3 themes,
+//   others pick 1 theme at a time until everyone has 3.
+//
 export function Screen02c() {
   const {
     phase1Ranking,
@@ -161,66 +109,92 @@ export function Screen02c() {
     goTo,
   } = useGameStore()
 
-  // Local assignment state: { playerName: [theme, ...] }
+  // assignments: { playerName: [{ theme, from: 'self'|playerName }, ...] }
+  // We track the 'from' to distinguish self-picks from received
   const [assignments, setAssignments] = useState(() => {
-    if (savedAssignments && Object.keys(savedAssignments).length > 0) return savedAssignments
+    if (savedAssignments && Object.keys(savedAssignments).length > 0) {
+      return Object.fromEntries(
+        Object.entries(savedAssignments).map(([p, themes]) =>
+          [p, themes.map(t => (typeof t === 'string' ? { theme: t, from: 'self' } : t))]
+        )
+      )
+    }
     return Object.fromEntries(activePlayers.map(p => [p, []]))
   })
 
-  // Attribution steps: for each player in ranking order → 'self' then 'other'
-  const steps = phase1Ranking.flatMap(p => [
-    { player: p, action: 'self' },
-    { player: p, action: 'other' },
-  ])
-  // Then tour 2: players who need more themes
-  const tour2Steps = phase1Ranking
-    .filter(p => (assignments[p]?.length || 0) < 3)
-    .flatMap(p => Array(3 - (assignments[p]?.length || 0)).fill({ player: p, action: 'self' }))
+  const [selectedTheme, setSelectedTheme] = useState(null)
 
-  const allSteps = [...steps, ...tour2Steps]
+  // Build step sequence
+  // Round A: for each player → 'self', then 'other'
+  const roundASteps = phase1Ranking.flatMap(p => [
+    { player: p, action: 'self', round: 'A' },
+    { player: p, action: 'other', round: 'A' },
+  ])
+
+  // Round B: computed dynamically based on current assignments
+  // Players who need more themes, in phase1Ranking order, one step per missing theme
+  const getRoundBSteps = (currentAssignments) => {
+    const steps = []
+    for (const p of phase1Ranking) {
+      const count = (currentAssignments[p] || []).length
+      const missing = 3 - count
+      for (let i = 0; i < missing; i++) {
+        steps.push({ player: p, action: 'self', round: 'B' })
+      }
+    }
+    return steps
+  }
+
+  const roundBSteps = getRoundBSteps(assignments)
+  const allSteps = [...roundASteps, ...roundBSteps]
 
   const [currentStep, setCurrentStep] = useState(0)
-  const [selectedTheme, setSelectedTheme] = useState(null)
   const [allDone, setAllDone] = useState(false)
 
   const step = allSteps[currentStep]
-  const assignedThemes = new Set(Object.values(assignments).flat())
-  const poolThemes = availableThemes.filter(t => !assignedThemes.has(t))
 
-  // Max received check
-  const receivedCounts = {}
-  activePlayers.forEach(p => { receivedCounts[p] = 0 })
-  // Count themes received from others (not self-chosen) — simplified: just count total
-  Object.entries(assignments).forEach(([p, themes]) => {
-    receivedCounts[p] = themes.length
-  })
+  // Pool of unassigned themes
+  const assignedSet = new Set(Object.values(assignments).flat().map(e => e.theme))
+  const poolThemes = availableThemes.filter(t => !assignedSet.has(t))
 
+  // Themes received from others (not self-picked) for a player
+  const receivedFromOthers = (player) =>
+    (assignments[player] || []).filter(e => e.from !== 'self' && e.from !== player).length
+
+  // Can a theme be assigned to targetPlayer given current step
   const canAssignTo = (targetPlayer) => {
     if (!step) return false
-    if (step.action === 'other' && targetPlayer === step.player) return false
-    // Max 2 themes from others in tour 1 (simplified: max 3 total in tour 1)
-    const currentCount = (assignments[targetPlayer] || []).length
-    const tour1Limit = currentStep < steps.length ? 2 : 3
-    return currentCount < tour1Limit
-  }
-
-  const handleThemeClick = (theme) => {
-    if (!step) return
-    setSelectedTheme(prev => prev === theme ? null : theme)
+    if (step.action === 'self') return targetPlayer === step.player
+    if (step.action === 'other') {
+      if (targetPlayer === step.player) return false // can't give to self in 'other' action
+      // In Round A: target cannot have received 2 themes from others yet
+      if (step.round === 'A' && receivedFromOthers(targetPlayer) >= 2) return false
+      // In Round B: no extra constraint beyond 3 total
+      if ((assignments[targetPlayer] || []).length >= 3) return false
+      return true
+    }
+    return false
   }
 
   const handleConfirm = (targetPlayer) => {
     if (!selectedTheme || !canAssignTo(targetPlayer)) return
 
+    const from = step.action === 'self' ? 'self' : step.player
+    const newEntry = { theme: selectedTheme, from }
+
     const newAssignments = {
       ...assignments,
-      [targetPlayer]: [...(assignments[targetPlayer] || []), selectedTheme],
+      [targetPlayer]: [...(assignments[targetPlayer] || []), newEntry],
     }
     setAssignments(newAssignments)
     setSelectedTheme(null)
 
+    // Recompute steps with updated assignments
+    const newRoundB = getRoundBSteps(newAssignments)
+    const newAllSteps = [...roundASteps, ...newRoundB]
     const nextStep = currentStep + 1
-    if (nextStep >= allSteps.length) {
+
+    if (nextStep >= newAllSteps.length) {
       setAllDone(true)
     } else {
       setCurrentStep(nextStep)
@@ -228,80 +202,63 @@ export function Screen02c() {
   }
 
   const handleLaunch = () => {
-    setThemeAssignments(assignments)
+    // Convert to simple string arrays for store
+    const simple = Object.fromEntries(
+      Object.entries(assignments).map(([p, entries]) => [p, entries.map(e => e.theme)])
+    )
+    setThemeAssignments(simple)
     initPhase2Questions()
     goTo('02e')
   }
 
+  // Consigne text — non-genré
   const consigne = step
     ? step.action === 'self'
-      ? `${step.player} choisit un thème pour lui·elle`
-      : `${step.player} attribue un thème à quelqu'un d'autre`
+      ? `${step.player}, choisis un thème pour toi`
+      : `${step.player}, attribue un thème à quelqu'un d'autre`
     : 'Attribution terminée'
 
+  // Players ordered by phase1Ranking for display
+  const orderedPlayers = [...phase1Ranking]
+
   return (
-    <div className="screen diagonal-bg" style={{ justifyContent: 'flex-start', paddingTop: 24 }}>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        maxWidth: 1100,
-        padding: '0 32px',
-        gap: 20,
-        height: '100%',
-      }}>
+    <div className="screen diagonal-bg" style={{ justifyContent: 'flex-start', paddingTop: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: 1100, padding: '0 32px', gap: 16, height: '100%' }}>
 
         {/* Consigne */}
         <div style={{
           background: 'rgba(212,175,55,0.08)',
           border: '1px solid rgba(212,175,55,0.25)',
           borderRadius: 'var(--radius-md)',
-          padding: '14px 24px',
+          padding: '12px 24px',
           textAlign: 'center',
         }}>
-          <span style={{
-            fontFamily: 'var(--font-condensed)',
-            fontSize: '1.3rem',
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            color: 'var(--yellow)',
-          }}>
+          <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.04em', color: 'var(--yellow)' }}>
             {consigne}
           </span>
           {selectedTheme && (
-            <span style={{
-              marginLeft: 12,
-              fontFamily: 'var(--font-condensed)',
-              fontSize: '1rem',
-              color: 'var(--white-secondary)',
-            }}>
-              — Thème sélectionné : <strong style={{ color: 'var(--white)' }}>{selectedTheme}</strong>
+            <span style={{ marginLeft: 12, fontFamily: 'var(--font-condensed)', fontSize: '1rem', color: 'var(--white-secondary)' }}>
+              — <strong style={{ color: 'var(--white)' }}>{selectedTheme}</strong> sélectionné·e
+            </span>
+          )}
+          {step && (
+            <span style={{ marginLeft: 12, fontFamily: 'var(--font-condensed)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              Round {step.round}
             </span>
           )}
         </div>
 
-        {/* Themes pool */}
+        {/* Theme pool */}
         <div>
-          <div style={{
-            fontFamily: 'var(--font-condensed)',
-            fontSize: '0.7rem',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: 'var(--white-secondary)',
-            marginBottom: 10,
-          }}>
+          <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--white-secondary)', marginBottom: 8 }}>
             Thèmes disponibles
           </div>
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 8,
-          }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {poolThemes.map(theme => (
               <button
                 key={theme}
                 className={`theme-card${selectedTheme === theme ? ' selected' : ''}`}
-                onClick={() => handleThemeClick(theme)}
+                onClick={() => setSelectedTheme(prev => prev === theme ? null : theme)}
               >
                 {theme}
               </button>
@@ -314,69 +271,54 @@ export function Screen02c() {
           </div>
         </div>
 
-        {/* Player containers */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${activePlayers.length}, 1fr)`,
-          gap: 10,
-          flex: 1,
-        }}>
-          {activePlayers.map(player => {
+        {/* Player containers — ordered by phase1Ranking */}
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${orderedPlayers.length}, 1fr)`, gap: 10, flex: 1 }}>
+          {orderedPlayers.map(player => {
             const playerThemes = assignments[player] || []
-            const isTarget = step?.action === 'other' && player !== step?.player
-            const isSelf = step?.action === 'self' && player === step?.player
-            const canReceive = selectedTheme && canAssignTo(player) && step && (
-              (step.action === 'self' && player === step.player) ||
-              (step.action === 'other' && player !== step.player)
-            )
+            const canReceive = selectedTheme && canAssignTo(player)
+            const isActive = step?.player === player
+            const selfPick = step?.action === 'self' && player === step?.player
+            const otherPick = step?.action === 'other' && player !== step?.player
 
             return (
               <div
                 key={player}
                 onClick={() => canReceive && handleConfirm(player)}
                 style={{
-                  padding: '14px 16px',
+                  padding: '12px 14px',
                   borderRadius: 'var(--radius-md)',
-                  border: `1.5px solid ${
-                    canReceive ? 'var(--yellow)' :
-                    (isSelf || isTarget) ? 'rgba(212,175,55,0.3)' :
-                    'rgba(255,255,255,0.08)'
-                  }`,
+                  border: `1.5px solid ${canReceive ? 'var(--yellow)' : isActive ? 'rgba(212,175,55,0.35)' : 'rgba(255,255,255,0.08)'}`,
                   background: canReceive ? 'rgba(212,175,55,0.08)' : 'var(--bg-light)',
                   cursor: canReceive ? 'pointer' : 'default',
                   transition: 'all 0.2s ease',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 8,
+                  gap: 6,
+                  opacity: (!selectedTheme || canReceive) ? 1 : 0.5,
                 }}
               >
-                <div style={{
-                  fontFamily: 'var(--font-condensed)',
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.05em',
-                  color: isSelf ? 'var(--yellow)' : 'var(--white)',
-                }}>
+                <div style={{ fontFamily: 'var(--font-condensed)', fontSize: '0.95rem', fontWeight: 700, letterSpacing: '0.05em', color: isActive ? 'var(--yellow)' : 'var(--white)', marginBottom: 4 }}>
                   {player}
                 </div>
-                {[0, 1, 2].map(slotIndex => (
-                  <div key={slotIndex} style={{
-                    padding: '8px 12px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: '1px dashed rgba(255,255,255,0.15)',
-                    background: playerThemes[slotIndex]
-                      ? 'rgba(212,175,55,0.08)'
-                      : 'rgba(255,255,255,0.02)',
-                    fontSize: '0.8rem',
-                    fontFamily: 'var(--font-condensed)',
-                    color: playerThemes[slotIndex] ? 'var(--white)' : 'rgba(255,255,255,0.2)',
-                    minHeight: 36,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}>
-                    {playerThemes[slotIndex] || `Thème ${slotIndex + 1}`}
-                  </div>
-                ))}
+                {[0, 1, 2].map(slotIndex => {
+                  const entry = playerThemes[slotIndex]
+                  return (
+                    <div key={slotIndex} style={{
+                      padding: '7px 10px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: `1px ${entry ? 'solid rgba(212,175,55,0.25)' : 'dashed rgba(255,255,255,0.12)'}`,
+                      background: entry ? 'rgba(212,175,55,0.07)' : 'rgba(255,255,255,0.02)',
+                      fontSize: '0.78rem',
+                      fontFamily: 'var(--font-condensed)',
+                      color: entry ? 'var(--white)' : 'rgba(255,255,255,0.2)',
+                      minHeight: 32,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}>
+                      {entry ? entry.theme : `Thème ${slotIndex + 1}`}
+                    </div>
+                  )
+                })}
               </div>
             )
           })}
@@ -391,7 +333,6 @@ export function Screen02c() {
           </div>
         )}
       </div>
-
       <AdminControls />
       <Watermark />
     </div>

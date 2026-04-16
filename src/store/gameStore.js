@@ -160,15 +160,21 @@ export const useGameStore = create((set, get) => ({
   // ── Phase 1: record answer ────────────────────────────────────────────────
   recordPhase1Answer: (playerName, questionId, mode, correct) => {
     const pts = correct ? { Duo: 1, Carré: 2, Cash: 4 }[mode] : 0
-    set(state => ({
-      phase1Answers: {
+    set(state => {
+      const updatedAnswers = {
         ...state.phase1Answers,
         [playerName]: [
           ...(state.phase1Answers[playerName] || []),
           { questionId, mode, correct, points: pts },
         ],
-      },
-    }))
+      }
+      // Recompute live scores
+      const currentScores = {}
+      state.playerOrder.forEach(p => {
+        currentScores[p] = (updatedAnswers[p] || []).reduce((s, a) => s + a.points, 0)
+      })
+      return { phase1Answers: updatedAnswers, currentScores }
+    })
     get().persist()
   },
 
