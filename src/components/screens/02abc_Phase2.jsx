@@ -48,21 +48,14 @@ export function Screen02b() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, width: '100%' }}>
           {availableThemes.map((theme, i) => (
             <div key={i} style={{
-              padding: '14px 12px',
-              borderRadius: 'var(--radius-sm)',
+              padding: '14px 12px', borderRadius: 'var(--radius-sm)',
               border: `1.5px solid ${i < revealed ? 'rgba(212,175,55,0.4)' : 'rgba(255,255,255,0.08)'}`,
               background: i < revealed ? 'rgba(212,175,55,0.07)' : 'rgba(10,37,68,0.5)',
-              textAlign: 'center',
-              fontFamily: 'var(--font-condensed)',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              letterSpacing: '0.04em',
+              textAlign: 'center', fontFamily: 'var(--font-condensed)', fontSize: '0.85rem',
+              fontWeight: 700, letterSpacing: '0.04em',
               color: i < revealed ? 'var(--white)' : 'rgba(255,255,255,0.15)',
-              transition: 'all 0.35s var(--ease-out)',
-              minHeight: 56,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              transition: 'all 0.35s var(--ease-out)', minHeight: 56,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               {i < revealed ? theme : '?'}
             </div>
@@ -89,14 +82,19 @@ export function Screen02b() {
 
 // ─── 02c Theme Attribution ────────────────────────────────────────────────────
 //
-// ROUND A: each player (in phase1Ranking order) does 2 actions:
-//   1. Picks 1 theme for themselves (always possible — protected slot)
-//   2. Assigns 1 theme to another player
-//      Constraint: a player can receive max 2 themes FROM OTHERS in Round A
-//      (so they always have a slot for their own pick)
+// Uses an explicit ACTION QUEUE stored in state (never recomputed from index).
 //
-// ROUND B: same order, skip players who already have 3 themes,
-//   others pick 1 theme at a time until everyone has 3.
+// ROUND A — fixed sequence per phase1Ranking order:
+//   { player, action:'self',  round:'A' }  — player picks 1 theme for themselves
+//   { player, action:'other', round:'A' }  — player assigns 1 theme to someone else
+//   Constraint: target cannot have received >2 themes FROM OTHERS in Round A
+//
+// ROUND B — rebuilt fresh after each Round A action:
+//   { player, action:'self', round:'B' } × (3 - current count) for each player needing themes
+//   Players already at 3 are automatically skipped (they generate 0 steps)
+//
+// Queue is CONSUMED (shifted) on each confirmed action.
+// allDone is ONLY set when every player has exactly 3 themes.
 //
 export function Screen02c() {
   const {
@@ -109,64 +107,57 @@ export function Screen02c() {
     goTo,
   } = useGameStore()
 
-  // assignments: { playerName: [{ theme, from: 'self'|playerName }, ...] }
-  // We track the 'from' to distinguish self-picks from received
+  // assignments: { playerName: [{ theme, from }] }
   const [assignments, setAssignments] = useState(() => {
     if (savedAssignments && Object.keys(savedAssignments).length > 0) {
       return Object.fromEntries(
         Object.entries(savedAssignments).map(([p, themes]) =>
-          [p, themes.map(t => (typeof t === 'string' ? { theme: t, from: 'self' } : t))]
+          [p, themes.map(t => typeof t === 'string' ? { theme: t, from: 'self' } : t)]
         )
       )
     }
-    return Object.fromEntries(activePlayers.map(p => [p, []]))
+    return Object.fromEntries(phase1Ranking.map(p => [p, []]))
   })
 
-  const [selectedTheme, setSelectedTheme] = useState(null)
-  const [currentStep, setCurrentStep] = useState(0)
-  const [allDone, setAllDone] = useState(false)
-
-  // Round A steps are fixed
-  const roundASteps = phase1Ranking.flatMap(p => [
-    { player: p, action: 'self', round: 'A' },
-    { player: p, action: 'other', round: 'A' },
-  ])
-
-  // Round B steps recomputed from CURRENT assignments every render
-  const getRoundBSteps = (currentAssignments) => {
+  // Build Round B steps from current assignments
+  const buildRoundB = (currentAssignments) => {
     const steps = []
     for (const p of phase1Ranking) {
-      const count = (currentAssignments[p] || []).length
-      const missing = 3 - count
-      for (let i = 0; i < missing; i++) {
+      const have = (currentAssignments[p] || []).length
+      for (let i = have; i < 3; i++) {
         steps.push({ player: p, action: 'self', round: 'B' })
       }
     }
     return steps
   }
 
-  // Always derive allSteps fresh from current assignments
-  const currentRoundBSteps = getRoundBSteps(assignments)
-  const allSteps = [...roundASteps, ...currentRoundBSteps]
-  const step = allSteps[currentStep]
+  // Initial queue: Round A (fixed) + Round B (computed from initial assignments)
+  const [queue, setQueue] = useState(() => {
+    const roundA = phase1Ranking.flatMap(p => [
+      { player: p, action: 'self', round: 'A' },
+      { player: p, action: 'other', round: 'A' },
+    ])
+    return [...roundA, ...buildRoundB(Object.fromEntries(phase1Ranking.map(p => [p, []])))]
+  })
 
-  // Check truly done: every player has exactly 3 themes
+  const [selectedTheme, setSelectedTheme] = useState(null)
+
+  const step = queue[0] || null
   const everyoneHas3 = phase1Ranking.every(p => (assignments[p] || []).length >= 3)
 
   // Pool of unassigned themes
   const assignedSet = new Set(Object.values(assignments).flat().map(e => e.theme))
   const poolThemes = availableThemes.filter(t => !assignedSet.has(t))
 
-  // Themes received from others for a player
-  const receivedFromOthers = (player) =>
-    (assignments[player] || []).filter(e => e.from !== 'self' && e.from !== player).length
+  const receivedFromOthers = (player, currentAssignments) =>
+    (currentAssignments[player] || []).filter(e => e.from !== 'self' && e.from !== player).length
 
   const canAssignTo = (targetPlayer) => {
     if (!step) return false
     if (step.action === 'self') return targetPlayer === step.player
     if (step.action === 'other') {
       if (targetPlayer === step.player) return false
-      if (step.round === 'A' && receivedFromOthers(targetPlayer) >= 2) return false
+      if (step.round === 'A' && receivedFromOthers(targetPlayer, assignments) >= 2) return false
       if ((assignments[targetPlayer] || []).length >= 3) return false
       return true
     }
@@ -177,26 +168,38 @@ export function Screen02c() {
     if (!selectedTheme || !canAssignTo(targetPlayer)) return
 
     const from = step.action === 'self' ? 'self' : step.player
-    const newEntry = { theme: selectedTheme, from }
-
     const newAssignments = {
       ...assignments,
-      [targetPlayer]: [...(assignments[targetPlayer] || []), newEntry],
+      [targetPlayer]: [...(assignments[targetPlayer] || []), { theme: selectedTheme, from }],
     }
     setAssignments(newAssignments)
     setSelectedTheme(null)
 
-    // Check if everyone has 3 themes now
-    const nowDone = phase1Ranking.every(p => (newAssignments[p] || []).length >= 3)
-    if (nowDone) {
-      setAllDone(true)
+    // Consume the current step
+    const rest = queue.slice(1)
+
+    // After every step, rebuild Round B fresh from new state
+    // (this handles the case where receiving a theme in Round A reduces someone's Round B needs)
+    const isLastRoundAStep = rest.length === 0 || rest[0]?.round === 'B'
+    const freshRoundB = buildRoundB(newAssignments)
+
+    // Determine new queue:
+    // - If we're still in Round A and next step is also Round A, keep it
+    // - Otherwise, use freshly built Round B
+    let newQueue
+    if (rest.length > 0 && rest[0].round === 'A') {
+      // Still in Round A — keep Round A steps, but replace any Round B tail with fresh one
+      const roundARemaining = rest.filter(s => s.round === 'A')
+      newQueue = [...roundARemaining, ...freshRoundB]
     } else {
-      setCurrentStep(prev => prev + 1)
+      // Transitioning to or already in Round B — use fresh Round B only
+      newQueue = freshRoundB
     }
+
+    setQueue(newQueue)
   }
 
   const handleLaunch = () => {
-    // Convert to simple string arrays for store
     const simple = Object.fromEntries(
       Object.entries(assignments).map(([p, entries]) => [p, entries.map(e => e.theme)])
     )
@@ -205,14 +208,14 @@ export function Screen02c() {
     goTo('02e')
   }
 
-  // Consigne text — non-genré
   const consigne = step
     ? step.action === 'self'
       ? `${step.player}, choisis un thème pour toi`
       : `${step.player}, attribue un thème à quelqu'un d'autre`
-    : 'Attribution terminée'
+    : everyoneHas3
+      ? 'Attribution terminée ✓'
+      : 'Attribution en cours…'
 
-  // Players ordered by phase1Ranking for display
   const orderedPlayers = [...phase1Ranking]
 
   return (
@@ -220,13 +223,7 @@ export function Screen02c() {
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: 1100, padding: '0 32px', gap: 16, height: '100%' }}>
 
         {/* Consigne */}
-        <div style={{
-          background: 'rgba(212,175,55,0.08)',
-          border: '1px solid rgba(212,175,55,0.25)',
-          borderRadius: 'var(--radius-md)',
-          padding: '12px 24px',
-          textAlign: 'center',
-        }}>
+        <div style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 'var(--radius-md)', padding: '12px 24px', textAlign: 'center' }}>
           <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.04em', color: 'var(--yellow)' }}>
             {consigne}
           </span>
@@ -259,35 +256,30 @@ export function Screen02c() {
             ))}
             {poolThemes.length === 0 && (
               <span style={{ color: 'var(--white-secondary)', fontFamily: 'var(--font-body)', fontSize: '0.85rem' }}>
-                Tous les thèmes sont attribués
+                Tous les thèmes ont été attribués
               </span>
             )}
           </div>
         </div>
 
-        {/* Player containers — ordered by phase1Ranking */}
+        {/* Player containers */}
         <div style={{ display: 'grid', gridTemplateColumns: `repeat(${orderedPlayers.length}, 1fr)`, gap: 10, flex: 1 }}>
           {orderedPlayers.map(player => {
             const playerThemes = assignments[player] || []
-            const canReceive = selectedTheme && canAssignTo(player)
             const isActive = step?.player === player
-            const selfPick = step?.action === 'self' && player === step?.player
-            const otherPick = step?.action === 'other' && player !== step?.player
+            const canReceive = !!selectedTheme && canAssignTo(player)
 
             return (
               <div
                 key={player}
                 onClick={() => canReceive && handleConfirm(player)}
                 style={{
-                  padding: '12px 14px',
-                  borderRadius: 'var(--radius-md)',
+                  padding: '12px 14px', borderRadius: 'var(--radius-md)',
                   border: `1.5px solid ${canReceive ? 'var(--yellow)' : isActive ? 'rgba(212,175,55,0.35)' : 'rgba(255,255,255,0.08)'}`,
                   background: canReceive ? 'rgba(212,175,55,0.08)' : 'var(--bg-light)',
                   cursor: canReceive ? 'pointer' : 'default',
                   transition: 'all 0.2s ease',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 6,
+                  display: 'flex', flexDirection: 'column', gap: 6,
                   opacity: (!selectedTheme || canReceive) ? 1 : 0.5,
                 }}
               >
@@ -298,16 +290,12 @@ export function Screen02c() {
                   const entry = playerThemes[slotIndex]
                   return (
                     <div key={slotIndex} style={{
-                      padding: '7px 10px',
-                      borderRadius: 'var(--radius-sm)',
+                      padding: '7px 10px', borderRadius: 'var(--radius-sm)',
                       border: `1px ${entry ? 'solid rgba(212,175,55,0.25)' : 'dashed rgba(255,255,255,0.12)'}`,
                       background: entry ? 'rgba(212,175,55,0.07)' : 'rgba(255,255,255,0.02)',
-                      fontSize: '0.78rem',
-                      fontFamily: 'var(--font-condensed)',
+                      fontSize: '0.78rem', fontFamily: 'var(--font-condensed)',
                       color: entry ? 'var(--white)' : 'rgba(255,255,255,0.2)',
-                      minHeight: 32,
-                      display: 'flex',
-                      alignItems: 'center',
+                      minHeight: 32, display: 'flex', alignItems: 'center',
                     }}>
                       {entry ? entry.theme : `Thème ${slotIndex + 1}`}
                     </div>
@@ -318,8 +306,8 @@ export function Screen02c() {
           })}
         </div>
 
-        {/* Launch button */}
-        {allDone && (
+        {/* Launch — only when truly everyone has 3 themes */}
+        {everyoneHas3 && (
           <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 16 }}>
             <button className="btn btn-primary" style={{ minWidth: 260 }} onClick={handleLaunch}>
               Lancer le premier thème →
