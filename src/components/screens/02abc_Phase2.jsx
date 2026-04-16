@@ -123,16 +123,16 @@ export function Screen02c() {
   })
 
   const [selectedTheme, setSelectedTheme] = useState(null)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [allDone, setAllDone] = useState(false)
 
-  // Build step sequence
-  // Round A: for each player → 'self', then 'other'
+  // Round A steps are fixed
   const roundASteps = phase1Ranking.flatMap(p => [
     { player: p, action: 'self', round: 'A' },
     { player: p, action: 'other', round: 'A' },
   ])
 
-  // Round B: computed dynamically based on current assignments
-  // Players who need more themes, in phase1Ranking order, one step per missing theme
+  // Round B steps recomputed from CURRENT assignments every render
   const getRoundBSteps = (currentAssignments) => {
     const steps = []
     for (const p of phase1Ranking) {
@@ -145,31 +145,28 @@ export function Screen02c() {
     return steps
   }
 
-  const roundBSteps = getRoundBSteps(assignments)
-  const allSteps = [...roundASteps, ...roundBSteps]
-
-  const [currentStep, setCurrentStep] = useState(0)
-  const [allDone, setAllDone] = useState(false)
-
+  // Always derive allSteps fresh from current assignments
+  const currentRoundBSteps = getRoundBSteps(assignments)
+  const allSteps = [...roundASteps, ...currentRoundBSteps]
   const step = allSteps[currentStep]
+
+  // Check truly done: every player has exactly 3 themes
+  const everyoneHas3 = phase1Ranking.every(p => (assignments[p] || []).length >= 3)
 
   // Pool of unassigned themes
   const assignedSet = new Set(Object.values(assignments).flat().map(e => e.theme))
   const poolThemes = availableThemes.filter(t => !assignedSet.has(t))
 
-  // Themes received from others (not self-picked) for a player
+  // Themes received from others for a player
   const receivedFromOthers = (player) =>
     (assignments[player] || []).filter(e => e.from !== 'self' && e.from !== player).length
 
-  // Can a theme be assigned to targetPlayer given current step
   const canAssignTo = (targetPlayer) => {
     if (!step) return false
     if (step.action === 'self') return targetPlayer === step.player
     if (step.action === 'other') {
-      if (targetPlayer === step.player) return false // can't give to self in 'other' action
-      // In Round A: target cannot have received 2 themes from others yet
+      if (targetPlayer === step.player) return false
       if (step.round === 'A' && receivedFromOthers(targetPlayer) >= 2) return false
-      // In Round B: no extra constraint beyond 3 total
       if ((assignments[targetPlayer] || []).length >= 3) return false
       return true
     }
@@ -189,15 +186,12 @@ export function Screen02c() {
     setAssignments(newAssignments)
     setSelectedTheme(null)
 
-    // Recompute steps with updated assignments
-    const newRoundB = getRoundBSteps(newAssignments)
-    const newAllSteps = [...roundASteps, ...newRoundB]
-    const nextStep = currentStep + 1
-
-    if (nextStep >= newAllSteps.length) {
+    // Check if everyone has 3 themes now
+    const nowDone = phase1Ranking.every(p => (newAssignments[p] || []).length >= 3)
+    if (nowDone) {
       setAllDone(true)
     } else {
-      setCurrentStep(nextStep)
+      setCurrentStep(prev => prev + 1)
     }
   }
 

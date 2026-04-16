@@ -621,6 +621,7 @@ button {
   letter-spacing: 0.05em;
   text-align: center;
   cursor: pointer;
+  color: var(--white);
   transition: all 0.18s var(--ease-out);
   user-select: none;
 }

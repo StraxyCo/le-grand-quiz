@@ -40,6 +40,15 @@ export function useAudio() {
     })
   }, [])
 
+  const playVictory = useCallback((playerName) => {
+    stopAll()
+    play(`/media/phase04/${playerName.toLowerCase()}.mp3`, { volume: 0.9 })
+  }, [play, stopAll])
+
+  const playTitleTheme = useCallback(() => {
+    play('/media/structure/title-theme.mp3', { volume: 0.7 })
+  }, [play])
+
   const playCountdown = useCallback(() => {
     play('/media/structure/countdown.mp3', { volume: 0.6 })
   }, [play])
@@ -51,15 +60,6 @@ export function useAudio() {
   const playGong = useCallback(() => {
     play('/media/structure/gong.mp3', { volume: 0.9 })
   }, [play])
-
-  const playTitleTheme = useCallback(() => {
-    play('/media/structure/title-theme.mp3', { volume: 0.7 })
-  }, [play])
-
-  const playVictory = useCallback((playerName) => {
-    stopAll()
-    play(`/media/phase04/${playerName.toLowerCase()}.mp3`, { volume: 0.9 })
-  }, [play, stopAll])
 
   return {
     play,

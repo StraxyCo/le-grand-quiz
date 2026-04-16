@@ -63,19 +63,30 @@ export function saveSnapshot(screenId, state) {
   try {
     const key = `${SNAPSHOT_PREFIX}${screenId}`
     const snap = {
+      currentScreen: screenId,
       screenHistory: state.screenHistory,
+      activePlayers: state.activePlayers,
+      playerOrder: state.playerOrder,
+      phase1Questions: state.phase1Questions,
       phase1Answers: state.phase1Answers,
       phase1CurrentPlayerIndex: state.phase1CurrentPlayerIndex,
       phase1CurrentQuestionIndex: state.phase1CurrentQuestionIndex,
       phase1Ranking: state.phase1Ranking,
+      availableThemes: state.availableThemes,
+      themeAssignments: state.themeAssignments,
+      phase2Questions: state.phase2Questions,
       phase2Answers: state.phase2Answers,
+      phase2Order: state.phase2Order,
       phase2CurrentIndex: state.phase2CurrentIndex,
       phase2Ranking: state.phase2Ranking,
       finalists: state.finalists,
+      phase3Questions: state.phase3Questions,
       phase3Answers: state.phase3Answers,
       phase3CurrentQuestionIndex: state.phase3CurrentQuestionIndex,
       phase3CurrentPlayerStep: state.phase3CurrentPlayerStep,
       finalWinner: state.finalWinner,
+      tiebreakerQuestion: state.tiebreakerQuestion,
+      tiebreakerContext: state.tiebreakerContext,
       currentScores: state.currentScores,
     }
     localStorage.setItem(key, JSON.stringify(snap))

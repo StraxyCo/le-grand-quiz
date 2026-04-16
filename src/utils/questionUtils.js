@@ -57,11 +57,18 @@ export function getShuffledOptions(question, mode) {
   if (mode === 'Cash') return []
 
   const correct = { text: question.answer, isCorrect: true }
-  const wrongs = [question.wrong1, question.wrong2, question.wrong3]
-    .filter(Boolean)
-    .map(t => ({ text: t, isCorrect: false }))
 
-  const numWrong = mode === 'Duo' ? 1 : 3
-  const selected = [correct, ...shuffle(wrongs).slice(0, numWrong)]
-  return shuffle(selected)
+  let wrongs
+  if (mode === 'Duo') {
+    // Always use wrong1 as the single distractor (ordered by difficulty in CSV)
+    wrongs = question.wrong1 ? [{ text: question.wrong1, isCorrect: false }] : []
+  } else {
+    // Carré: all 3 wrong answers, shuffled
+    wrongs = [question.wrong1, question.wrong2, question.wrong3]
+      .filter(Boolean)
+      .map(t => ({ text: t, isCorrect: false }))
+    wrongs = shuffle(wrongs)
+  }
+
+  return shuffle([correct, ...wrongs])
 }

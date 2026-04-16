@@ -1,7 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
 
+// Strip leading "public/" from paths — Vite serves public/ at root
+function resolvePath(mediaPath) {
+  if (!mediaPath) return null
+  return '/' + mediaPath.replace(/^public\//, '')
+}
+
 export function MediaPlayer({ mediaPath }) {
   if (!mediaPath) return null
+  const src = resolvePath(mediaPath)
   const ext = mediaPath.split('.').pop().toLowerCase()
   const isAudio = ['mp3', 'wav', 'ogg', 'm4a'].includes(ext)
   const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)
@@ -16,32 +23,30 @@ export function MediaPlayer({ mediaPath }) {
         overflow: 'hidden',
         border: '1px solid rgba(212,175,55,0.25)',
         flexShrink: 0,
-        background: 'rgba(10,37,68,0.8)',
+        background: 'rgba(10,37,68,0.6)',
       }}>
         <img
-          src={`/${mediaPath}`}
+          src={src}
           alt="Illustration de la question"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          onError={e => { e.target.style.display = 'none' }}
         />
       </div>
     )
   }
-  if (isAudio) return <AudioPlayer src={`/${mediaPath}`} />
+  if (isAudio) return <AudioPlayer src={src} />
   return null
 }
 
 function AudioPlayer({ src }) {
-  const [playing, setPlaying] = useState(false)
-  const [canPlay, setCanPlay] = useState(false)
+  const [state, setState] = useState('idle') // 'idle' | 'playing' | 'paused'
   const audioRef = useRef(null)
 
   useEffect(() => {
-    const audio = new Audio(src)
+    const audio = document.createElement('audio')
+    audio.preload = 'auto'
+    audio.src = src
+    audio.addEventListener('ended', () => setState('idle'))
     audioRef.current = audio
-    audio.addEventListener('canplaythrough', () => setCanPlay(true))
-    audio.addEventListener('ended', () => setPlaying(false))
-    audio.load()
     return () => {
       audio.pause()
       audio.src = ''
@@ -52,20 +57,26 @@ function AudioPlayer({ src }) {
     const audio = audioRef.current
     if (!audio) return
     audio.currentTime = 0
-    audio.play().then(() => setPlaying(true)).catch(console.error)
+    audio.play()
+      .then(() => setState('playing'))
+      .catch(e => console.warn('Audio play failed', e))
   }
 
   const handlePause = () => {
     audioRef.current?.pause()
-    setPlaying(false)
+    setState('paused')
   }
 
   const handleRestart = () => {
     const audio = audioRef.current
     if (!audio) return
     audio.currentTime = 0
-    audio.play().then(() => setPlaying(true)).catch(console.error)
+    audio.play()
+      .then(() => setState('playing'))
+      .catch(e => console.warn('Audio restart failed', e))
   }
+
+  const isPlaying = state === 'playing'
 
   return (
     <div style={{
@@ -76,39 +87,31 @@ function AudioPlayer({ src }) {
       borderRadius: 'var(--radius-md)',
       background: 'rgba(10,37,68,0.8)',
       border: '1.5px solid rgba(212,175,55,0.25)',
-      maxWidth: 360,
     }}>
-      {/* Play/Pause */}
       <button
-        onClick={playing ? handlePause : handlePlay}
+        onClick={isPlaying ? handlePause : handlePlay}
         style={{
           width: 48, height: 48, borderRadius: '50%',
-          background: playing ? 'var(--yellow-dark)' : 'var(--yellow)',
+          background: isPlaying ? 'var(--yellow-dark)' : 'var(--yellow)',
           border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0, fontSize: '1.1rem', color: 'var(--bg-dark)',
-          transition: 'transform 0.15s ease',
-          opacity: canPlay ? 1 : 0.5,
+          transition: 'all 0.15s ease',
         }}
-        disabled={!canPlay}
       >
-        {playing ? '⏸' : '▶'}
+        {isPlaying ? '⏸' : '▶'}
       </button>
-      {/* Restart */}
       <button
         onClick={handleRestart}
+        title="Recommencer"
         style={{
           width: 36, height: 36, borderRadius: '50%',
           background: 'rgba(255,255,255,0.07)',
           border: '1px solid rgba(255,255,255,0.15)',
           cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0, fontSize: '0.85rem', color: 'var(--white-secondary)',
-          transition: 'all 0.15s ease',
-          opacity: canPlay ? 1 : 0.5,
+          flexShrink: 0, fontSize: '0.9rem', color: 'var(--white-secondary)',
         }}
-        disabled={!canPlay}
-        title="Recommencer"
       >
         ↺
       </button>
@@ -117,7 +120,7 @@ function AudioPlayer({ src }) {
           Extrait audio
         </div>
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--white-secondary)' }}>
-          {!canPlay ? 'Chargement…' : playing ? 'Lecture en cours…' : 'Appuyer pour écouter'}
+          {isPlaying ? 'Lecture en cours…' : 'Appuyer pour écouter'}
         </div>
       </div>
     </div>
