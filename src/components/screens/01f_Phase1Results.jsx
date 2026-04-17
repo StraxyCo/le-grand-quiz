@@ -98,7 +98,7 @@ export function Screen01f() {
 
   const handleNext = () => {
     initPhase2Themes()
-    goTo('02a')
+    goTo('02intro')
   }
 
   // Build display: all slots pre-rendered top→bottom (high→low)

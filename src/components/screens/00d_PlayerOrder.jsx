@@ -60,7 +60,7 @@ export function Screen00d() {
 
   const handleStart = () => {
     initPhase1()
-    goTo('01a')
+    goTo('01intro')
   }
 
   return (

@@ -1,12 +1,25 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAudio } from './useAudio'
+import { onMediaAudioChange } from '../components/ui/MediaPlayer'
+
+const COUNTDOWN_SRC = '/media/structure/countdown.mp3'
 
 export function useTimer(duration = 30) {
   const [timeLeft, setTimeLeft] = useState(duration)
   const [running, setRunning] = useState(false)
   const [finished, setFinished] = useState(false)
   const intervalRef = useRef(null)
+  const countdownAudioRef = useRef(null)
   const { playCountdown, stopCountdown, playGong } = useAudio()
+
+  // Duck countdown when media audio plays
+  useEffect(() => {
+    const unsub = onMediaAudioChange((playing) => {
+      if (!countdownAudioRef.current) return
+      countdownAudioRef.current.volume = playing ? 0 : 0.6
+    })
+    return unsub
+  }, [])
 
   const clear = () => {
     if (intervalRef.current) {
@@ -19,7 +32,12 @@ export function useTimer(duration = 30) {
     setTimeLeft(duration)
     setFinished(false)
     setRunning(true)
-    playCountdown()
+
+    // Build a direct audio ref for volume control
+    const audio = new Audio(COUNTDOWN_SRC)
+    audio.volume = 0.6
+    audio.play().catch(() => {})
+    countdownAudioRef.current = audio
 
     intervalRef.current = setInterval(() => {
       setTimeLeft(prev => {
@@ -28,38 +46,48 @@ export function useTimer(duration = 30) {
           intervalRef.current = null
           setRunning(false)
           setFinished(true)
-          stopCountdown()
+          audio.pause()
+          countdownAudioRef.current = null
           playGong()
           return 0
         }
         return prev - 1
       })
     }, 1000)
-  }, [duration, playCountdown, stopCountdown, playGong])
+  }, [duration, playGong])
 
   const skip = useCallback(() => {
     clear()
-    stopCountdown()
+    if (countdownAudioRef.current) {
+      countdownAudioRef.current.pause()
+      countdownAudioRef.current = null
+    }
     setRunning(false)
     // Do NOT play gong on skip
-  }, [stopCountdown])
+  }, [])
 
   const reset = useCallback(() => {
     clear()
-    stopCountdown()
+    if (countdownAudioRef.current) {
+      countdownAudioRef.current.pause()
+      countdownAudioRef.current = null
+    }
     setTimeLeft(duration)
     setRunning(false)
     setFinished(false)
-  }, [duration, stopCountdown])
+  }, [duration])
 
   useEffect(() => {
     return () => {
       clear()
-      stopCountdown()
+      if (countdownAudioRef.current) {
+        countdownAudioRef.current.pause()
+        countdownAudioRef.current = null
+      }
     }
-  }, [stopCountdown])
+  }, [])
 
-  const progress = timeLeft / duration // 1.0 → 0.0
+  const progress = timeLeft / duration
   const urgent = timeLeft <= 10
 
   return { timeLeft, running, finished, progress, urgent, start, skip, reset }

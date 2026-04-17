@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { useTimer } from '../../hooks/useTimer'
 import { MediaPlayer } from '../ui/MediaPlayer'
@@ -6,6 +6,26 @@ import { TimerRing } from '../ui/Timer'
 import { Watermark } from '../ui/Watermark'
 import { AdminControls } from '../admin/AdminControls'
 import { getShuffledOptions, shuffle } from '../../utils/questionUtils'
+import { playSfx } from '../../utils/soundUtils'
+
+// Inline version of RulesCards (avoids circular imports)
+function RulesCardsInline({ rules }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, width: '100%' }}>
+      {rules.map((rule, i) => (
+        <div key={i} className="card" style={{ padding: '18px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 8 }}>
+          <span style={{ fontSize: '1.8rem' }}>{rule.icon}</span>
+          <div style={{ fontFamily: 'var(--font-condensed)', fontWeight: 700, fontSize: '0.95rem', color: 'var(--yellow)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            {rule.title}
+          </div>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--white-secondary)', lineHeight: 1.5 }}>
+            {rule.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 // ─── 02e Player title ────────────────────────────────────────────────────────
 export function Screen02e() {
@@ -74,8 +94,15 @@ export function Screen02f() {
   const [cashResult, setCashResult] = useState(null)
 
   const { timeLeft, running, finished, progress, urgent, start, skip } = useTimer(30)
+  const soundPlayed = useRef(false)
 
-  // Reset local state when question changes (next question in same theme)
+  const playResult = (correct) => {
+    if (soundPlayed.current) return
+    soundPlayed.current = true
+    playSfx(correct ? '/media/structure/success.mp3' : '/media/structure/failure.mp3')
+  }
+
+  // Reset local state when question changes
   const questionKey = question?.id
   useEffect(() => {
     setStep('choice')
@@ -83,18 +110,28 @@ export function Screen02f() {
     setOptions([])
     setSelected(null)
     setCashResult(null)
+    soundPlayed.current = false
   }, [questionKey])
 
   const handleModeSelect = (m) => {
     setMode(m)
     setOptions(getShuffledOptions(question, m))
     setStep('timer')
+    soundPlayed.current = false
     start()
   }
 
   const handleShowAnswer = () => {
     skip()
     setStep('answer')
+    if (mode !== 'Cash') {
+      playResult(!!selected?.isCorrect)
+    }
+  }
+
+  const handleCashResult = (result) => {
+    setCashResult(result)
+    playResult(result === 'correct')
   }
 
   const handleRecord = () => {
@@ -201,7 +238,15 @@ export function Screen02f() {
                 let cls = 'answer-option'
                 if (opt.isCorrect) cls += ' correct'
                 else if (selected?.text === opt.text) cls += ' wrong'
-                return <div key={i} className={cls} style={{ cursor: 'default', animationDelay: `${i*0.07}s` }}>{opt.text}</div>
+                return (
+                  <div key={i} className={cls} style={{
+                    cursor: 'default',
+                    animation: 'answerReveal 0.25s ease both',
+                    animationDelay: `${i * 0.06}s`,
+                  }}>
+                    {opt.text}
+                  </div>
+                )
               })}
             </div>
           )}
@@ -219,8 +264,8 @@ export function Screen02f() {
               </div>
               {!cashResult ? (
                 <div style={{ display: 'flex', gap: 10 }}>
-                  <button className="btn btn-success" onClick={() => setCashResult('correct')} style={{ minWidth: 130 }}>✓ Réussi</button>
-                  <button className="btn btn-danger" onClick={() => setCashResult('wrong')} style={{ minWidth: 130 }}>✗ Raté</button>
+                  <button className="btn btn-success" onClick={() => handleCashResult('correct')} style={{ minWidth: 130 }}>✓ Réussi</button>
+                  <button className="btn btn-danger" onClick={() => handleCashResult('wrong')} style={{ minWidth: 130 }}>✗ Raté</button>
                 </div>
               ) : (
                 <div style={{ fontFamily: 'var(--font-condensed)', color: cashResult === 'correct' ? 'var(--green)' : 'var(--red)', fontSize: '1rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -263,9 +308,6 @@ export function Screen02g() {
   const [ranking, setRanking] = useState([])
   const [scores, setScores] = useState({})
   const [revealedCount, setRevealedCount] = useState(0)
-  const [tiebreakGroupIdx, setTiebreakGroupIdx] = useState(null)
-  const [rollingGroups, setRollingGroups] = useState({})
-  const [rollingDone, setRollingDone] = useState({})
   const [done, setDone] = useState(false)
 
   useEffect(() => {
@@ -286,29 +328,24 @@ export function Screen02g() {
   const groupRank = (gi) => grouped.slice(0, gi).reduce((sum, g) => sum + g.players.length, 0) + 1
 
   const handleReveal = () => {
-    if (tiebreakGroupIdx !== null) return
     const nextIdx = revealedCount
     if (nextIdx >= groupedReversed.length) return
-    const group = groupedReversed[nextIdx]
     setRevealedCount(nextIdx + 1)
-    if (group.players.length > 1) setTiebreakGroupIdx(nextIdx)
     if (nextIdx + 1 >= groupedReversed.length) setDone(true)
   }
 
-  const handleTiebreak = () => {
-    if (tiebreakGroupIdx === null) return
-    // Remove the random shuffle — instead go directly to AuPlusProche question
-    setTiebreakGroupIdx(null)
-    initTiebreaker('phase2')
-    goTo('02h')
-  }
-
-  const handleRollingDone = (revIdx, playerIdx) => {
-    const group = groupedReversed[revIdx]
-    if (playerIdx === group.players.length - 1) {
-      setRollingDone(prev => ({ ...prev, [revIdx]: true }))
-    }
-  }
+  // After all revealed, check if tiebreak is needed
+  const needsTiebreak = done && (() => {
+    if (!scores[ranking[0]]) return false
+    const top1Score = scores[ranking[0]]
+    const playersAt1st = ranking.filter(p => scores[p] === top1Score)
+    if (playersAt1st.length === 2) return false // exactly 2 tied for 1st → fine
+    if (playersAt1st.length >= 3) return true   // Cas 03
+    // Cas 02: clear P1, check 2nd place tie
+    const top2Score = scores[ranking[1]]
+    const tiedFor2nd = ranking.filter(p => scores[p] === top2Score && scores[p] !== top1Score)
+    return tiedFor2nd.length >= 2
+  })()
 
   const handleNext = () => {
     const top1Score = scores[ranking[0]]
@@ -333,7 +370,7 @@ export function Screen02g() {
       } else {
         setFinalists([playersAt1st[0], ...ranking.filter(p => scores[p] === top2Score).slice(0, 1)])
       }
-      goTo('03a')
+      goTo('03intro')
       return
     }
 
@@ -344,22 +381,6 @@ export function Screen02g() {
     // Either way → go to 02h (AuPlusProche)
     initTiebreaker('phase2')
     goTo('02h')
-  }
-
-  const ALL_NAMES = ['Amandine', 'Catherine', 'Hélène', 'Léa', 'Matthieu', 'Nicolas']
-
-  function RollingName({ finalName, onDone }) {
-    const [current, setCurrent] = useState('…')
-    useEffect(() => {
-      let count = 0
-      const interval = setInterval(() => {
-        count++
-        if (count >= 18) { clearInterval(interval); setCurrent(finalName); onDone?.() }
-        else setCurrent(ALL_NAMES[Math.floor(Math.random() * ALL_NAMES.length)])
-      }, 80)
-      return () => clearInterval(interval)
-    }, [finalName])
-    return <span style={{ color: 'var(--yellow)' }}>{current}</span>
   }
 
   return (
@@ -373,10 +394,8 @@ export function Screen02g() {
             const revIdx = grouped.length - 1 - gi
             const isRevealed = revIdx < revealedCount
             const rank = groupRank(gi)
-            const resolvedOrder = rollingGroups[revIdx] || group.players
-            const isRolling = rollingGroups[revIdx] && !rollingDone[revIdx]
 
-            return resolvedOrder.map((player, pi) => {
+            return group.players.map((player, pi) => {
               const isFinalist = rank + pi <= 2
               return (
                 <div key={player} style={{
@@ -390,8 +409,8 @@ export function Screen02g() {
                   {isRevealed ? (
                     <>
                       <span style={{ fontFamily: 'var(--font-condensed)', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.05em', flex: 1 }}>
-                        {isRolling ? <RollingName finalName={player} onDone={() => handleRollingDone(revIdx, pi)} /> : player}
-                        {isFinalist && !isRolling && (
+                        {player}
+                        {isFinalist && !needsTiebreak && (
                           <span style={{ marginLeft: 10, fontSize: '0.65rem', color: 'var(--yellow)', letterSpacing: '0.1em' }}>FINALISTE</span>
                         )}
                       </span>
@@ -405,15 +424,15 @@ export function Screen02g() {
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          {tiebreakGroupIdx !== null && (
-            <button className="btn btn-secondary" style={{ minWidth: 220 }} onClick={handleTiebreak}>
+          {!done && (
+            <button className="btn btn-primary" style={{ minWidth: 180 }} onClick={handleReveal}>Révéler ↓</button>
+          )}
+          {done && needsTiebreak && (
+            <button className="btn btn-secondary" style={{ minWidth: 240 }} onClick={() => { initTiebreaker('phase2'); goTo('02h') }}>
               Question au plus proche →
             </button>
           )}
-          {tiebreakGroupIdx === null && !done && (
-            <button className="btn btn-primary" style={{ minWidth: 180 }} onClick={handleReveal}>Révéler ↓</button>
-          )}
-          {done && tiebreakGroupIdx === null && (
+          {done && !needsTiebreak && (
             <button className="btn btn-primary" style={{ minWidth: 240 }} onClick={handleNext}>Passer à la Finale →</button>
           )}
         </div>
@@ -473,7 +492,7 @@ export function Screen02h() {
       finalists = [playersAt1st[0], winners[0]]
     }
     setFinalists(finalists)
-    goTo('03a')
+    goTo('03intro')
   }
 
   if (!q) return null
@@ -489,22 +508,33 @@ export function Screen02h() {
             <h1 className="text-display text-gold anim-fade-in stagger-1" style={{ fontSize: '3.5rem', lineHeight: 1 }}>
               Au Plus Proche
             </h1>
-            <div className="anim-fade-in stagger-2" style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 520, width: '100%' }}>
-              {[
-                isCas03
-                  ? `Égalité pour les 2 premières places : ${tiedPlayers.join(', ')}`
-                  : `Égalité pour la 2e place : ${tiedPlayers.join(', ')}`,
-                'Une question avec une réponse numérique va être posée.',
-                isCas03
-                  ? "Les 2 joueur·euses qui s'approchent le plus de la bonne réponse passent en finale."
-                  : "Le·la joueur·euse qui s'approche le plus de la bonne réponse rejoint le 1er en finale.",
-                "En cas d'égalité parfaite : chifoumi.",
-              ].map((rule, i) => (
-                <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: i === 0 ? 'var(--yellow)' : 'var(--white-secondary)', fontWeight: i === 0 ? 700 : 400 }}>
-                  {i > 0 && <span style={{ color: 'var(--yellow)', fontSize: '0.6rem', marginTop: 6, flexShrink: 0 }}>◆</span>}
-                  {rule}
-                </div>
-              ))}
+            <div className="anim-fade-in stagger-2" style={{ width: '100%', maxWidth: 700 }}>
+              <RulesCardsInline rules={[
+                {
+                  icon: '⚖️',
+                  title: isCas03 ? 'Égalité en tête' : 'Égalité pour la 2e place',
+                  desc: isCas03
+                    ? `${tiedPlayers.join(', ')} sont à égalité pour les deux premières places.`
+                    : `${tiedPlayers.join(', ')} sont à égalité pour la deuxième place.`,
+                },
+                {
+                  icon: '🔢',
+                  title: 'Une question numérique',
+                  desc: 'Chaque joueur·euse répond à voix haute. La réponse la plus proche gagne.',
+                },
+                {
+                  icon: isCas03 ? '🥇🥈' : '🎟️',
+                  title: isCas03 ? '2 finalistes à désigner' : '1 finaliste à désigner',
+                  desc: isCas03
+                    ? "L'administrateur·ice sélectionne les 2 joueur·euses les plus proches."
+                    : `L'administrateur·ice sélectionne le·la finaliste le·la plus proche, qui rejoint ${playersAt1st[0]} en finale.`,
+                },
+                {
+                  icon: '🤞',
+                  title: 'Égalité parfaite ?',
+                  desc: 'En cas d\'égalité absolue, un chifoumi départage.',
+                },
+              ]} />
             </div>
             <button className="btn btn-primary anim-slide-up stagger-3" style={{ minWidth: 240 }}
               onClick={() => { setStep('question'); start() }}>

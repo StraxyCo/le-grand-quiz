@@ -19,10 +19,10 @@ export function Screen02b() {
               padding: '14px 12px', borderRadius: 'var(--radius-sm)',
               border: `1.5px solid ${i < revealed ? 'rgba(212,175,55,0.4)' : 'rgba(255,255,255,0.08)'}`,
               background: i < revealed ? 'rgba(212,175,55,0.07)' : 'rgba(10,37,68,0.5)',
-              textAlign: 'center', fontFamily: 'var(--font-condensed)', fontSize: '0.85rem',
+              textAlign: 'center', fontFamily: 'var(--font-condensed)', fontSize: '1rem',
               fontWeight: 700, letterSpacing: '0.04em',
               color: i < revealed ? 'var(--white)' : 'rgba(255,255,255,0.15)',
-              transition: 'all 0.35s var(--ease-out)', minHeight: 56,
+              transition: 'all 0.35s var(--ease-out)', minHeight: 70,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               {i < revealed ? theme : '?'}

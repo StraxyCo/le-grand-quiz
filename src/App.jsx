@@ -16,18 +16,21 @@ import { Screen02e, Screen02f, Screen02g, Screen02h } from './components/screens
 import { Screen03a } from './components/screens/03a_Phase3Title'
 import { Screen03b, Screen03c, Screen03d, Screen03e, Screen03f, Screen03g, Screen03h, Screen03i } from './components/screens/03_Phase3'
 import { Screen04a } from './components/screens/04a_EndScreen'
+import { Screen01Intro, Screen02Intro, Screen03Intro } from './components/screens/PhaseIntro'
 
 const SCREEN_MAP = {
   '00a': Screen00a,
   '00b': Screen00b,
   '00c': Screen00c,
   '00d': Screen00d,
+  '01intro': Screen01Intro,
   '01a': Screen01a,
   '01b': Screen01b,
   '01c': Screen01c,
   '01d': Screen01c,
   '01e': Screen01c,
   '01f': Screen01f,
+  '02intro': Screen02Intro,
   '02a': Screen02a,
   '02b': Screen02b,
   '02c': Screen02c,
@@ -35,6 +38,7 @@ const SCREEN_MAP = {
   '02f': Screen02f,
   '02g': Screen02g,
   '02h': Screen02h,
+  '03intro': Screen03Intro,
   '03a': Screen03a,
   '03b': Screen03b,
   '03c': Screen03c,

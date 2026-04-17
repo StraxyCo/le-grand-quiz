@@ -9,16 +9,14 @@ export function RulesCards({ rules, columns = 2 }) {
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 14, width: '100%' }}>
       {rules.map((rule, i) => (
         <div key={i} className={`card anim-slide-up stagger-${i + 1}`}
-          style={{ padding: '18px 22px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-          <span style={{ fontSize: '1.6rem', flexShrink: 0, marginTop: 2 }}>{rule.icon}</span>
-          <div>
-            <div className="text-condensed" style={{ fontSize: '1rem', color: 'var(--yellow)', marginBottom: 6 }}>
-              {rule.title}
-            </div>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--white-secondary)', lineHeight: 1.5 }}>
-              {rule.desc}
-            </p>
+          style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 10 }}>
+          <span style={{ fontSize: '2rem' }}>{rule.icon}</span>
+          <div className="text-condensed" style={{ fontSize: '1rem', color: 'var(--yellow)' }}>
+            {rule.title}
           </div>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--white-secondary)', lineHeight: 1.5 }}>
+            {rule.desc}
+          </p>
         </div>
       ))}
     </div>
