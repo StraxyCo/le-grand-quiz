@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAudio } from './useAudio'
-import { onMediaAudioChange } from '../components/ui/MediaPlayer'
+import { onMediaAudioChange, isMediaAudioPlaying } from '../components/ui/MediaPlayer'
 
 const COUNTDOWN_SRC = '/media/structure/countdown.mp3'
 
@@ -10,9 +10,9 @@ export function useTimer(duration = 30) {
   const [finished, setFinished] = useState(false)
   const intervalRef = useRef(null)
   const countdownAudioRef = useRef(null)
-  const { playCountdown, stopCountdown, playGong } = useAudio()
+  const { playGong } = useAudio()
 
-  // Duck countdown when media audio plays
+  // Duck countdown reactively when media audio starts/stops
   useEffect(() => {
     const unsub = onMediaAudioChange((playing) => {
       if (!countdownAudioRef.current) return
@@ -33,9 +33,9 @@ export function useTimer(duration = 30) {
     setFinished(false)
     setRunning(true)
 
-    // Build a direct audio ref for volume control
     const audio = new Audio(COUNTDOWN_SRC)
-    audio.volume = 0.6
+    // If media audio is already playing at the moment countdown starts, duck immediately
+    audio.volume = isMediaAudioPlaying() ? 0 : 0.6
     audio.play().catch(() => {})
     countdownAudioRef.current = audio
 

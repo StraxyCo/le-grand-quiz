@@ -378,9 +378,15 @@ export const useGameStore = create((set, get) => ({
 
   // ── Tiebreaker ─────────────────────────────────────────────────────────────
   initTiebreaker: (context) => {
-    const { questions } = get()
-    const pool = questions.filter(q => q.phase === 'AuPlusProche')
-    const q = pool[Math.floor(Math.random() * pool.length)]
+    const { questions, tiebreakerQuestion: usedQuestion } = get()
+    const pool = questions.filter(q =>
+      q.phase === 'AuPlusProche' &&
+      // Exclude any question already used in a previous tiebreaker
+      q.id !== usedQuestion?.id
+    )
+    // Fallback to full pool if all questions exhausted
+    const available = pool.length > 0 ? pool : questions.filter(q => q.phase === 'AuPlusProche')
+    const q = available[Math.floor(Math.random() * available.length)]
     set({ tiebreakerQuestion: q, tiebreakerContext: context })
     get().persist()
   },
